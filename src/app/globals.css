@@ -1,0 +1,47 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --brand-primary: #DFFF00; /* 네온 라임 */
+  --brand-secondary: #FF5F1F; /* 네온 오렌지 */
+  --bg-dark: #0F172A; /* 딥 네이비 */
+  --bg-card: #1E293B;
+  --text-main: #F8FAFC;
+}
+
+@layer base {
+  body {
+    @apply bg-slate-50 text-slate-900 transition-colors duration-300;
+  }
+}
+
+/* 기록 앱 화면 전용 스타일 (다크 테마 강제) */
+.record-app-shell {
+  @apply bg-[#0F172A] text-white;
+  padding-top: env(safe-area-inset-top, 0);
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  padding-left: env(safe-area-inset-left, 0);
+  padding-right: env(safe-area-inset-right, 0);
+}
+
+.safe-area-both {
+  padding-top: env(safe-area-inset-top, 0);
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  padding-left: env(safe-area-inset-left, 0);
+  padding-right: env(safe-area-inset-right, 0);
+}
+
+/* 세련된 버튼 효과 */
+.btn-active {
+  @apply active:scale-95 transition-transform duration-100;
+}
+
+/* 글래스모피즘 효과 */
+.glass {
+  @apply bg-white/80 backdrop-blur-md border border-white/20;
+}
+.glass-dark {
+  @apply bg-slate-800/80 backdrop-blur-md border border-slate-700/50;
+}
+

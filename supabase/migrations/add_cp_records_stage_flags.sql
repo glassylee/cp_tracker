@@ -1,0 +1,5 @@
+-- 타임라인 단계 및 병목/긴급 플래그
+ALTER TABLE cp_records
+  ADD COLUMN IF NOT EXISTS record_stage TEXT,
+  ADD COLUMN IF NOT EXISTS is_bottleneck BOOLEAN DEFAULT FALSE,
+  ADD COLUMN IF NOT EXISTS is_emergency BOOLEAN DEFAULT FALSE;
