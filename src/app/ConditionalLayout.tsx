@@ -1,6 +1,164 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
+import { useEffect, useState, Suspense, useMemo } from "react";
+import ProjectSettingsMenu from "./projects/ProjectSettingsMenu";
+
+interface Project {
+  id: string;
+  name: string;
+  event_date: string | null;
+}
+
+function SidebarNav({ sidebarProjects }: { sidebarProjects: Project[] }) {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const filter = searchParams ? searchParams.get('filter') || 'active' : 'active';
+  
+  // 클라이언트 사이드에서만 날짜를 계산하여 Hydration Mismatch 방지
+  const [today, setToday] = useState<Date | null>(null);
+  
+  useEffect(() => {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    setToday(d);
+  }, []);
+
+  const { activeProjects, pastProjects } = useMemo(() => {
+    if (!today || !Array.isArray(sidebarProjects)) {
+      return { activeProjects: sidebarProjects || [], pastProjects: [] };
+    }
+
+    const active: Project[] = [];
+    const past: Project[] = [];
+
+    sidebarProjects.forEach(p => {
+      if (!p.event_date) {
+        active.push(p);
+      } else {
+        const eventDate = new Date(p.event_date);
+        eventDate.setHours(0, 0, 0, 0);
+        if (eventDate >= today) {
+          active.push(p);
+        } else {
+          past.push(p);
+        }
+      }
+    });
+
+    return { activeProjects: active, pastProjects: past };
+  }, [sidebarProjects, today]);
+
+  // 하부 메뉴 렌더링 함수
+  const renderProjectItem = (p: Project, isPast: boolean) => {
+    const isProjectActive = pathname?.startsWith(`/projects/${p.id}`);
+    
+    return (
+      <div key={p.id} className="space-y-0.5">
+        <div className="group/item relative flex items-center">
+          <a
+            href={isPast ? `/projects/${p.id}/review` : `/projects/${p.id}`}
+            className={`flex-1 rounded-lg px-4 py-1.5 text-[12px] font-medium truncate transition-all ${
+              pathname === `/projects/${p.id}` || pathname === `/projects/${p.id}/review`
+                ? "bg-white text-[#0071E3] shadow-sm ring-1 ring-black/5"
+                : isProjectActive
+                  ? "text-[#1D1D1F] font-bold"
+                  : "text-[#86868B] hover:text-[#1D1D1F] hover:bg-white/20"
+            }`}
+          >
+            {p.name}
+          </a>
+          <div className="absolute right-1 opacity-0 group-hover/item:opacity-100 transition-opacity">
+            <ProjectSettingsMenu projectId={p.id} projectName={p.name} variant="sidebar" />
+          </div>
+        </div>
+        {isProjectActive && (
+          <div className="ml-4 border-l border-[#D2D2D7]/30 pl-2 space-y-0.5 mt-0.5 mb-2 animate-in slide-in-from-left-2 duration-200">
+            {isPast ? (
+              <>
+                <a href={`/projects/${p.id}/review`} className={`block rounded-lg px-4 py-1 text-[11px] font-medium transition-all ${pathname?.includes('/review') ? "text-[#0071E3] bg-[#0071E3]/5" : "text-[#86868B] hover:text-[#1D1D1F]"}`}>대회 리뷰</a>
+              </>
+            ) : (
+              <>
+                <a href={`/projects/${p.id}`} className={`block rounded-lg px-4 py-1 text-[11px] font-medium transition-all ${pathname === `/projects/${p.id}` ? "text-[#0071E3] bg-[#0071E3]/5" : "text-[#86868B] hover:text-[#1D1D1F]"}`}>CP 관리</a>
+                <a href={`/projects/${p.id}/dashboard/settings`} className={`block rounded-lg px-4 py-1 text-[11px] font-medium transition-all ${pathname?.includes('/dashboard') ? "text-[#0071E3] bg-[#0071E3]/5" : "text-[#86868B] hover:text-[#1D1D1F]"}`}>대시보드</a>
+              </>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  return (
+    <nav className="flex-1 px-3 py-6 space-y-8">
+      <div>
+        <div className="px-4 mb-3">
+          <p className="text-[11px] font-bold text-[#86868B] uppercase tracking-widest italic">Event Management</p>
+        </div>
+        
+        <div className="space-y-0.5">
+          <a
+            href="/projects?filter=active"
+            className={`flex items-center gap-2.5 rounded-lg px-4 py-2 text-[13px] font-medium transition-all ${
+              pathname === "/projects" && filter === 'active'
+                ? "bg-white text-black shadow-[0_1px_3px_rgba(0,0,0,0.1)] ring-1 ring-black/5"
+                : "text-[#1D1D1F] hover:bg-white/50"
+            }`}
+          >
+            <span className="w-5 text-center opacity-70">⚡</span>
+            진행 중인 대회
+          </a>
+
+          <div className="mt-1 ml-4 border-l border-[#D2D2D7]/50 pl-2 space-y-0.5">
+            {activeProjects.map(p => renderProjectItem(p, false))}
+            {today && activeProjects.length === 0 && filter === 'active' && (
+              <span className="block px-4 py-1.5 text-[11px] text-[#A1A1A6] italic font-medium">진행 중인 대회 없음</span>
+            )}
+          </div>
+
+          <a
+            href="/projects?filter=past"
+            className={`flex items-center gap-2.5 rounded-lg px-4 py-2 text-[13px] font-medium transition-all mt-4 ${
+              pathname === "/projects" && filter === 'past'
+                ? "bg-white text-black shadow-[0_1px_3px_rgba(0,0,0,0.1)] ring-1 ring-black/5"
+                : "text-[#1D1D1F] hover:bg-white/50"
+            }`}
+          >
+            <span className="w-5 text-center opacity-70">📁</span>
+            지난 대회 기록
+          </a>
+
+          <div className="mt-1 ml-4 border-l border-[#D2D2D7]/50 pl-2 space-y-0.5">
+            {pastProjects.map(p => renderProjectItem(p, true))}
+            {today && pastProjects.length === 0 && filter === 'past' && (
+              <span className="block px-4 py-1.5 text-[11px] text-[#A1A1A6] italic font-medium">지난 대회 없음</span>
+            )}
+          </div>
+        </div>
+      </div>
+      
+      <div>
+        <div className="px-4 mb-3">
+          <p className="text-[11px] font-bold text-[#86868B] uppercase tracking-widest italic">Analytics</p>
+        </div>
+        <div className="space-y-0.5">
+          <a 
+            href="/analytics" 
+            className={`flex items-center gap-2.5 rounded-lg px-4 py-2 text-[13px] font-medium transition-all ${
+              pathname === "/analytics"
+                ? "bg-white text-black shadow-[0_1px_3px_rgba(0,0,0,0.1)] ring-1 ring-black/5"
+                : "text-[#1D1D1F] hover:bg-white/50"
+            }`}
+          >
+            <span className="w-5 text-center opacity-70">📊</span>
+            통계 및 리포트
+          </a>
+        </div>
+      </div>
+    </nav>
+  );
+}
 
 export default function ConditionalLayout({
   children,
@@ -8,31 +166,81 @@ export default function ConditionalLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const [sidebarProjects, setSidebarProjects] = useState<Project[]>([]);
+
+  useEffect(() => {
+    let isMounted = true;
+    async function fetchSidebarProjects() {
+      try {
+        const res = await fetch('/api/projects/sidebar', { cache: 'no-store' });
+        if (!res.ok) return;
+        const data = await res.json();
+        if (isMounted && data.projects) {
+          setSidebarProjects(data.projects);
+        }
+      } catch (e) {
+        console.error("Sidebar projects fetch error:", e);
+      }
+    }
+    fetchSidebarProjects();
+    return () => { isMounted = false; };
+  }, [pathname]);
+
   const isRecordPage = pathname?.match(/^\/projects\/[^/]+\/record$/);
   const isDashboardPage = pathname?.match(/^\/projects\/[^/]+\/dashboard$/);
 
-  if (isRecordPage) {
-    return <>{children}</>;
-  }
-  if (isDashboardPage) {
-    return <div className="min-h-screen bg-slate-50">{children}</div>;
-  }
+  if (isRecordPage) return <>{children}</>;
+  if (isDashboardPage) return <div className="min-h-screen bg-slate-50">{children}</div>;
 
   return (
-    <>
-      <header className="sticky top-0 z-50 border-b border-slate-200/60 bg-white/80 backdrop-blur-md">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-          <a href="/" className="flex items-center gap-2 group">
-            <div className="h-8 w-8 rounded-lg bg-slate-900 flex items-center justify-center text-[--brand-primary] font-black italic shadow-lg group-hover:scale-105 transition-transform">
-              CP
+    <div className="flex min-h-screen bg-[#F5F5F7]">
+      <aside className="fixed inset-y-0 left-0 z-50 w-64 border-r border-[#D2D2D7]/30 bg-[#F5F5F7]/80 backdrop-blur-xl hidden md:block overflow-y-auto">
+        <div className="flex h-full flex-col">
+          <div className="flex h-16 items-center px-8 shrink-0 border-b border-[#D2D2D7]/20">
+            <a href="/" className="flex items-center gap-2 group">
+              <div className="h-6 w-6 rounded-md bg-black flex items-center justify-center text-[--brand-primary] font-black italic text-[10px]">CP</div>
+              <span className="text-lg font-semibold tracking-tight text-black">Tracker</span>
+            </a>
+          </div>
+
+          <Suspense fallback={<div className="flex-1 px-3 py-6 animate-pulse bg-slate-100/50" />}>
+            <SidebarNav sidebarProjects={sidebarProjects} />
+          </Suspense>
+
+          <div className="p-6 shrink-0 border-t border-[#D2D2D7]/20">
+            <div className="rounded-xl bg-white/40 p-4 border border-[#D2D2D7]/20">
+              <p className="text-[10px] font-semibold text-[#86868B] uppercase tracking-wider mb-2">Admin Portal</p>
+              <div className="flex items-center gap-3">
+                <div className="h-7 w-7 rounded-full bg-[#1D1D1F] text-white flex items-center justify-center text-[10px] font-bold">AD</div>
+                <div>
+                  <p className="text-[12px] font-semibold text-[#1D1D1F]">Administrator</p>
+                  <p className="text-[10px] text-[#86868B]">v1.0.0 Stable</p>
+                </div>
+              </div>
             </div>
-            <span className="text-xl font-bold tracking-tight text-slate-900 uppercase">
-              Tracker
-            </span>
-          </a>
+          </div>
         </div>
-      </header>
-      <main className="mx-auto max-w-6xl px-4 py-10">{children}</main>
-    </>
+      </aside>
+
+      <div className="flex-1 md:pl-64">
+        <header className="sticky top-0 z-40 border-b border-[#D2D2D7]/30 bg-[#F5F5F7]/80 backdrop-blur-xl md:hidden">
+          <div className="flex items-center justify-between px-6 py-4">
+            <a href="/" className="flex items-center gap-2">
+              <div className="h-6 w-6 rounded-md bg-black flex items-center justify-center text-[--brand-primary] font-black italic text-[10px]">CP</div>
+              <span className="text-lg font-semibold tracking-tight text-black">Tracker</span>
+            </a>
+            <button className="rounded-full p-2 text-black hover:bg-black/5 transition-colors">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 5H17M3 10H17M3 15H17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+              </svg>
+            </button>
+          </div>
+        </header>
+
+        <main className="mx-auto max-w-5xl px-6 py-10 md:px-12 md:py-16">
+          {children}
+        </main>
+      </div>
+    </div>
   );
 }

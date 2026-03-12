@@ -3,7 +3,12 @@ import { createClient } from "@/lib/supabase/server";
 import CreateTestProjectButton from "./CreateTestProjectButton";
 import ProjectSettingsMenu from "./ProjectSettingsMenu";
 
-export default async function ProjectsPage() {
+export default async function ProjectsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ filter?: string }>;
+}) {
+  const { filter = "active" } = await searchParams;
   const supabase = await createClient();
   const { data: projects, error } = await supabase
     .from("projects")
@@ -24,76 +29,107 @@ export default async function ProjectsPage() {
     );
   }
 
+  // 필터링 로직 (오늘 기준)
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const filteredProjects = projects?.filter((p) => {
+    if (!p.event_date) return filter === "active"; // 날짜 없으면 일단 활성으로 분류
+    const eventDate = new Date(p.event_date);
+    eventDate.setHours(0, 0, 0, 0);
+    return filter === "active" ? eventDate >= today : eventDate < today;
+  });
+
   return (
-    <div className="space-y-10">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between border-b border-slate-200 pb-8">
+    <div className="space-y-12">
+      <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between border-b border-[#D2D2D7]/30 pb-10">
         <div>
-          <h1 className="text-3xl font-black tracking-tight text-slate-900 uppercase">
-            대회 목록
+          <h1 className="text-4xl font-semibold tracking-tight text-[#1D1D1F]">
+            {filter === "active" ? "진행 중인 대회" : "지난 대회 기록"}
           </h1>
-          <p className="mt-2 text-slate-500 font-medium">
-            현재 진행 중인 대회와 체크포인트를 관리하세요.
+          <p className="mt-3 text-[#86868B] text-lg font-medium tracking-tight">
+            {filter === "active" 
+              ? "현재 운영 중이거나 예정된 대회를 관리합니다." 
+              : "종료된 대회의 기록을 열람할 수 있습니다."}
           </p>
         </div>
-        <div className="flex items-center gap-3">
-          <CreateTestProjectButton />
-          <Link
-            href="/projects/new"
-            className="btn-active inline-flex items-center gap-2 rounded-xl bg-slate-900 px-6 py-3 text-sm font-bold text-white shadow-xl transition-all hover:bg-slate-800 hover:shadow-slate-200"
-          >
-            <span>+</span> 대회 추가
-          </Link>
+        <div className="flex items-center gap-4">
+          {filter === "active" && (
+            <>
+              <CreateTestProjectButton />
+              <Link
+                href="/projects/new"
+                className="btn-active inline-flex items-center gap-2 rounded-full bg-[#0071E3] px-8 py-3.5 text-sm font-semibold text-white shadow-[0_4px_14px_0_rgba(0,113,227,0.39)] transition-all hover:bg-[#0077ED] hover:shadow-[0_6px_20px_rgba(0,113,227,0.23)]"
+              >
+                대회 추가
+              </Link>
+            </>
+          )}
         </div>
       </div>
 
-      {!projects?.length ? (
-        <div className="rounded-3xl border-2 border-dashed border-slate-200 bg-white p-16 text-center">
-          <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-slate-50 text-3xl shadow-inner">
-            ⛰️
+      {!filteredProjects?.length ? (
+        <div className="rounded-[2.5rem] border border-[#D2D2D7]/50 bg-white/50 p-24 text-center backdrop-blur-sm">
+          <div className="mx-auto mb-8 flex h-24 w-24 items-center justify-center rounded-full bg-[#F5F5F7] text-4xl">
+            {filter === "active" ? "⚡" : "📁"}
           </div>
-          <p className="text-lg font-bold text-slate-800 tracking-tight">등록된 대회가 없습니다.</p>
-          <p className="mt-2 text-sm text-slate-400 font-medium">새로운 대회를 추가하여 기록 관리를 시작하세요.</p>
+          <p className="text-2xl font-semibold text-[#1D1D1F] tracking-tight">
+            {filter === "active" ? "진행 중인 대회가 없습니다." : "지난 대회 기록이 없습니다."}
+          </p>
+          <p className="mt-3 text-[#86868B] text-lg font-medium">
+            {filter === "active" ? "새로운 대회를 추가하여 기록 관리를 시작하세요." : "종료된 대회가 여기에 표시됩니다."}
+          </p>
         </div>
       ) : (
-        <ul className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {projects.map((project) => (
-            <li key={project.id} className="group relative">
-              <Link
-                href={`/projects/${project.id}`}
-                className="relative block h-full overflow-hidden rounded-3xl border border-slate-200 bg-white p-8 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:border-slate-300 hover:shadow-2xl"
-              >
-                <div className="mb-6 flex items-start justify-between">
-                  <div className="rounded-lg bg-slate-900 px-3 py-1 text-[10px] font-black tracking-widest text-[--brand-primary] uppercase shadow-sm">
-                    Running Project
+        <div className="overflow-hidden rounded-[2.5rem] border border-[#D2D2D7]/50 bg-white shadow-[0_2px_15px_rgba(0,0,0,0.02)]">
+          <div className="divide-y divide-[#F5F5F7]">
+            {filteredProjects.map((project) => (
+              <div key={project.id} className="group relative transition-all hover:bg-[#F5F5F7]/50">
+                <Link
+                  href={`/projects/${project.id}`}
+                  className="flex items-center gap-8 p-8 sm:px-10"
+                >
+                  <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-2xl bg-[#F5F5F7] text-2xl group-hover:scale-110 transition-transform duration-500">
+                    {filter === "active" ? "🏃‍♂️" : "🏆"}
                   </div>
-                  {project.event_date && (
-                    <div className="text-xs font-bold text-slate-400 tracking-tighter">
-                      {new Date(project.event_date).toLocaleDateString("ko-KR")}
+                  
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-3 mb-1">
+                      <h2 className="text-2xl font-semibold text-[#1D1D1F] tracking-tight truncate">
+                        {project.name}
+                      </h2>
+                      {filter === "active" && (
+                        <span className="inline-flex items-center rounded-full bg-[#34C759]/10 px-2.5 py-0.5 text-[11px] font-bold text-[#34C759] ring-1 ring-[#34C759]/20">
+                          LIVE
+                        </span>
+                      )}
                     </div>
-                  )}
-                </div>
-                <h2 className="text-2xl font-black text-slate-900 group-hover:text-slate-800 tracking-tight pr-10">
-                  {project.name}
-                </h2>
-                {project.description && (
-                  <p className="mt-3 line-clamp-2 text-sm leading-relaxed text-slate-500 font-medium">
-                    {project.description}
-                  </p>
-                )}
-                <div className="mt-8 flex items-center justify-between border-t border-slate-50 pt-6">
-                  <span className="text-xs font-bold text-slate-400 group-hover:text-slate-900 transition-colors uppercase tracking-widest">
-                    Detail & CP Setup
-                  </span>
-                  <div className="h-8 w-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-slate-900 group-hover:text-white transition-all shadow-sm">
-                    →
+                    <p className="text-[#86868B] text-[15px] font-medium line-clamp-1">
+                      {project.description || "상세 설명이 없습니다."}
+                    </p>
                   </div>
-                </div>
-              </Link>
-              
-              <ProjectSettingsMenu projectId={project.id} projectName={project.name} />
-            </li>
-          ))}
-        </ul>
+
+                  <div className="hidden sm:flex flex-col items-end gap-1 px-4">
+                    <span className="text-[13px] font-semibold text-[#1D1D1F]">
+                      {project.event_date ? new Date(project.event_date).toLocaleDateString("ko-KR", { month: 'long', day: 'numeric', year: 'numeric' }) : "날짜 미정"}
+                    </span>
+                    <span className="text-[11px] font-medium text-[#86868B] uppercase tracking-wider">
+                      Event Date
+                    </span>
+                  </div>
+
+                  <div className="h-10 w-10 flex-shrink-0 flex items-center justify-center rounded-full text-[#D2D2D7] group-hover:text-black group-hover:bg-white transition-all shadow-sm">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                </Link>
+                
+                {/* ProjectSettingsMenu removed from here as it's now only in the sidebar */}
+              </div>
+            ))}
+          </div>
+        </div>
       )}
     </div>
   );

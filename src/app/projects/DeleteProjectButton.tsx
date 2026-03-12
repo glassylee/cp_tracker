@@ -8,11 +8,15 @@ export default function DeleteProjectButton({
   projectName,
   variant = "default",
   onDelete,
+  label,
+  className,
 }: {
   projectId: string;
   projectName: string;
-  variant?: "default" | "minimal";
+  variant?: "default" | "minimal" | "row";
   onDelete?: () => void;
+  label?: string;
+  className?: string;
 }) {
   const [loading, setLoading] = useState(false);
 
@@ -34,6 +38,23 @@ export default function DeleteProjectButton({
     } finally {
       setLoading(false);
     }
+  }
+
+  if (variant === "row") {
+    return (
+      <button
+        onClick={handleDelete}
+        disabled={loading}
+        className={className || "flex w-full items-center gap-2.5 px-5 py-3.5 text-[13px] font-semibold text-[#FF3B30] hover:bg-[#FF3B30]/5 transition-colors"}
+      >
+        {loading ? (
+          <span className="h-3 w-3 animate-spin rounded-full border-2 border-current border-t-transparent" />
+        ) : (
+          <span className="text-sm">🗑️</span>
+        )}
+        <span>{label || "삭제하기"}</span>
+      </button>
+    );
   }
 
   if (variant === "minimal") {

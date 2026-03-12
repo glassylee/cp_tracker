@@ -25,92 +25,107 @@ export default function NewProjectPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div>
+    <div className="max-w-2xl space-y-12 pb-20">
+      <div className="border-b border-[#D2D2D7]/30 pb-10">
         <Link
           href="/projects"
-          className="text-sm text-slate-600 hover:text-slate-900"
+          className="group inline-flex items-center gap-2 text-[14px] font-semibold text-[#86868B] hover:text-[#0071E3] transition-colors mb-6"
         >
-          ← 대회 목록
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="group-hover:-translate-x-1 transition-transform">
+            <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          대회 목록
         </Link>
-        <h1 className="mt-2 text-2xl font-bold text-slate-800">대회 추가</h1>
+        <h1 className="text-4xl font-semibold tracking-tight text-[#1D1D1F]">
+          대회 추가
+        </h1>
+        <p className="mt-3 text-[#86868B] text-lg font-medium tracking-tight">
+          새로운 트레일러닝 대회를 개설하고 운영을 시작하세요.
+        </p>
       </div>
+
       <form
         action={createProject}
-        className="max-w-lg rounded-lg border border-slate-200 bg-white p-6 shadow-sm"
+        className="rounded-[2.5rem] border border-[#D2D2D7]/50 bg-white p-10 shadow-[0_2px_15px_rgba(0,0,0,0.02)]"
       >
-        <div className="space-y-4">
-          <div>
-            <label
-              htmlFor="name"
-              className="block text-sm font-medium text-slate-700"
-            >
-              대회명 *
-            </label>
-            <input
-              id="name"
-              name="name"
-              required
-              className="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
-              placeholder="예: 2025 제1회 트레일러닝 대회"
-            />
-          </div>
-          <div>
-            <label
-              htmlFor="event_date"
-              className="block text-sm font-medium text-slate-700"
-            >
-              대회 일자
-            </label>
-            <input
-              id="event_date"
-              name="event_date"
-              type="date"
-              className="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
-            />
-          </div>
-          <div>
-            <label
-              htmlFor="description"
-              className="block text-sm font-medium text-slate-700"
-            >
-              설명
-            </label>
-            <textarea
-              id="description"
-              name="description"
-              rows={3}
-              className="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
-              placeholder="대회 개요 (선택)"
-            />
-          </div>
-          <div>
-            <label
-              htmlFor="dashboard_password"
-              className="block text-sm font-medium text-slate-700"
-            >
-              대시보드 비밀번호 (선택)
-            </label>
-            <input
-              id="dashboard_password"
-              name="dashboard_password"
-              type="password"
-              autoComplete="off"
-              className="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
-              placeholder="설정 시 대시보드 접속 시 입력 필요"
-            />
+        <div className="space-y-8">
+          <div className="grid gap-8 sm:grid-cols-2">
+            <div className="sm:col-span-2">
+              <label
+                htmlFor="name"
+                className="block text-[13px] font-semibold text-[#1D1D1F] mb-2 px-1"
+              >
+                대회명 <span className="text-[#FF3B30]">*</span>
+              </label>
+              <input
+                id="name"
+                name="name"
+                required
+                className="block w-full rounded-2xl border border-[#D2D2D7] bg-[#F5F5F7] px-5 py-4 text-[15px] text-[#1D1D1F] transition-all focus:bg-white focus:border-[#0071E3] focus:outline-none focus:ring-4 focus:ring-[#0071E3]/10"
+                placeholder="예: 2025 제1회 트레일러닝 대회"
+              />
+            </div>
+            
+            <div>
+              <label
+                htmlFor="event_date"
+                className="block text-[13px] font-semibold text-[#1D1D1F] mb-2 px-1"
+              >
+                대회 일자
+              </label>
+              <input
+                id="event_date"
+                name="event_date"
+                type="date"
+                className="block w-full rounded-2xl border border-[#D2D2D7] bg-[#F5F5F7] px-5 py-4 text-[15px] text-[#1D1D1F] transition-all focus:bg-white focus:border-[#0071E3] focus:outline-none focus:ring-4 focus:ring-[#0071E3]/10"
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="dashboard_password"
+                className="block text-[13px] font-semibold text-[#1D1D1F] mb-2 px-1"
+              >
+                대시보드 비밀번호
+              </label>
+              <input
+                id="dashboard_password"
+                name="dashboard_password"
+                type="password"
+                autoComplete="new-password"
+                className="block w-full rounded-2xl border border-[#D2D2D7] bg-[#F5F5F7] px-5 py-4 text-[15px] text-[#1D1D1F] transition-all focus:bg-white focus:border-[#0071E3] focus:outline-none focus:ring-4 focus:ring-[#0071E3]/10"
+                placeholder="미설정 시 바로 접속"
+              />
+            </div>
+
+            <div className="sm:col-span-2">
+              <label
+                htmlFor="description"
+                className="block text-[13px] font-semibold text-[#1D1D1F] mb-2 px-1"
+              >
+                대회 개요
+              </label>
+              <textarea
+                id="description"
+                name="description"
+                rows={4}
+                className="block w-full rounded-2xl border border-[#D2D2D7] bg-[#F5F5F7] px-5 py-4 text-[15px] text-[#1D1D1F] transition-all focus:bg-white focus:border-[#0071E3] focus:outline-none focus:ring-4 focus:ring-[#0071E3]/10 resize-none"
+                placeholder="대회에 대한 간략한 설명을 입력하세요."
+              />
+            </div>
           </div>
         </div>
-        <div className="mt-6 flex gap-3">
+
+        <div className="mt-12 flex items-center gap-4">
           <button
             type="submit"
-            className="rounded-lg bg-slate-800 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-700"
+            className="btn-active flex-1 sm:flex-none rounded-full bg-[#0071E3] px-10 py-4 text-[15px] font-semibold text-white transition-all hover:bg-[#0077ED] shadow-[0_4px_12px_rgba(0,113,227,0.2)]"
           >
             대회 생성
           </button>
           <Link
             href="/projects"
-            className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+            className="btn-active flex-1 sm:flex-none text-center rounded-full border border-[#D2D2D7] bg-white px-10 py-4 text-[15px] font-semibold text-[#1D1D1F] transition-all hover:bg-[#F5F5F7]"
           >
             취소
           </Link>

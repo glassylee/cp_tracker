@@ -23,9 +23,19 @@ export default function CreateTestProjectButton() {
       type="button"
       onClick={handleClick}
       disabled={loading}
-      className="rounded-lg border-2 border-amber-400 bg-amber-50 px-4 py-2 text-sm font-medium text-amber-800 transition hover:bg-amber-100 disabled:opacity-50"
+      className="btn-active hidden sm:flex items-center gap-2 rounded-full border border-[#D2D2D7] bg-white px-6 py-3.5 text-[14px] font-semibold text-[#1D1D1F] transition-all hover:bg-[#F5F5F7] disabled:opacity-50 shadow-sm"
     >
-      {loading ? "생성 중…" : "테스트용 대회 + CP 1개 생성"}
+      {loading ? (
+        <>
+          <span className="animate-spin text-[10px]">⌛</span>
+          생성 중…
+        </>
+      ) : (
+        <>
+          <span className="opacity-50">🧪</span>
+          테스트 대회 생성
+        </>
+      )}
     </button>
   );
 }
