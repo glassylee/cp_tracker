@@ -189,7 +189,7 @@ export default function ConditionalLayout({
       <aside className="fixed inset-y-0 left-0 z-50 w-64 border-r border-[#D2D2D7]/30 bg-[#F5F5F7]/80 backdrop-blur-xl hidden md:block overflow-y-auto">
         <div className="flex h-full flex-col">
           <div className="flex h-16 items-center px-8 shrink-0 border-b border-[#D2D2D7]/20">
-            <a href="/" className="flex items-center gap-2 group">
+            <a href="/projects" className="flex items-center gap-2 group">
               <div className="h-6 w-6 rounded-md bg-black flex items-center justify-center text-[--brand-primary] font-black italic text-[10px]">CP</div>
               <span className="text-lg font-semibold tracking-tight text-black">Tracker</span>
             </a>
@@ -217,7 +217,7 @@ export default function ConditionalLayout({
       <div className="flex-1 md:pl-64">
         <header className="sticky top-0 z-40 border-b border-[#D2D2D7]/30 bg-[#F5F5F7]/80 backdrop-blur-xl md:hidden">
           <div className="flex items-center justify-between px-6 py-4">
-            <a href="/" className="flex items-center gap-2">
+            <a href="/projects" className="flex items-center gap-2">
               <div className="h-6 w-6 rounded-md bg-black flex items-center justify-center text-[--brand-primary] font-black italic text-[10px]">CP</div>
               <span className="text-lg font-semibold tracking-tight text-black">Tracker</span>
             </a>
