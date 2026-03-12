@@ -76,7 +76,6 @@ function SidebarNav({ sidebarProjects }: { sidebarProjects: Project[] }) {
           <div className="ml-4 border-l border-[#D2D2D7]/30 pl-2 space-y-0.5 mt-0.5 mb-2 animate-in slide-in-from-left-2 duration-200">
             <a href={`/projects/${p.id}`} className={`block rounded-lg px-4 py-1 text-[11px] font-medium transition-all ${pathname === `/projects/${p.id}` ? "text-[#0071E3] bg-[#0071E3]/5" : "text-[#86868B] hover:text-[#1D1D1F]"}`}>CP 관리</a>
             <a href={`/projects/${p.id}/dashboard/settings`} className={`block rounded-lg px-4 py-1 text-[11px] font-medium transition-all ${pathname?.includes('/dashboard') ? "text-[#0071E3] bg-[#0071E3]/5" : "text-[#86868B] hover:text-[#1D1D1F]"}`}>대시보드</a>
-            <a href={`/projects/${p.id}/review`} className={`block rounded-lg px-4 py-1 text-[11px] font-medium transition-all ${pathname?.includes('/review') ? "text-[#0071E3] bg-[#0071E3]/5" : "text-[#86868B] hover:text-[#1D1D1F]"}`}>대회 리포트/리뷰</a>
           </div>
         )}
       </div>
