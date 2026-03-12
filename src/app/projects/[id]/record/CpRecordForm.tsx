@@ -203,7 +203,7 @@ export default function CpRecordForm({
       }
     } catch (err) {
       setStatus("error");
-      setMessage(err instanceof Error ? err.message : "저장 중 오류가 났습니다.");
+      setMessage(err instanceof Error ? err.message : "저장 중 오류가 발생했습니다.");
     }
   };
 
@@ -232,8 +232,7 @@ export default function CpRecordForm({
     return lines.length ? lines : ["입력된 값이 없습니다."];
   };
 
-  const inputClass =
-    "mt-2 block w-full min-h-[52px] rounded-xl border border-slate-300 bg-white px-4 py-4 text-base text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-500";
+  const commonInputClass = "mt-2 block w-full min-h-[52px] rounded-xl border border-slate-300 bg-white px-4 py-4 text-base text-black shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-500";
 
   return (
     <>
@@ -263,23 +262,14 @@ export default function CpRecordForm({
                     </label>
                     <input
                       id={`mat-${m.id}`}
-                      type="text"
+                      type="number"
                       inputMode="numeric"
-                      pattern="\d*"
-                      autoComplete="off"
                       value={form.materialQuantities[m.id] ?? ""}
-                      onChange={(e) => {
-                        const val = e.target.value.replace(/[^0-9]/g, "");
-                        handleMaterialChange(m.id, val);
-                      }}
-                      onFocus={(e) => e.target.select()}
-                      className="min-h-[52px] w-28 rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-500"
+                      onChange={(e) => handleMaterialChange(m.id, e.target.value)}
+                      className="min-h-[52px] w-28 rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-black shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-500"
                       placeholder="0"
                     />
                     <span className="shrink-0 text-base text-slate-600">{m.unit ?? "개"}</span>
-                    {recordStage === "operating" && (
-                      <span className="text-[10px] font-bold text-amber-600 uppercase tracking-tight ml-auto">Consumed</span>
-                    )}
                   </li>
                 ))}
               </ul>
@@ -295,24 +285,13 @@ export default function CpRecordForm({
               <input
                 id="material_quantity"
                 name="material_quantity"
-                type="text"
+                type="number"
                 inputMode="numeric"
-                pattern="\d*"
-                autoComplete="off"
                 value={form.material_quantity}
-                onChange={(e) => {
-                  const val = e.target.value.replace(/[^0-9]/g, "");
-                  setForm(prev => ({ ...prev, material_quantity: val }));
-                }}
-                onFocus={(e) => e.target.select()}
-                className={inputClass}
+                onChange={handleChange}
+                className={commonInputClass}
                 placeholder={recordStage === "operating" ? "소모된 양 입력" : "예: 100"}
               />
-              <p className="mt-2 text-sm text-slate-500">
-                {recordStage === "operating" 
-                  ? "지난 기록 이후 현재까지 소모된 총량을 입력하세요."
-                  : "이 CP에 물자 항목이 없습니다. 대회 상세에서 CP의 \"물자 항목 설정\"으로 항목을 추가할 수 있습니다."}
-              </p>
             </div>
           )}
           <div className="grid gap-6 sm:grid-cols-2">
@@ -326,19 +305,12 @@ export default function CpRecordForm({
               <input
                 id="temperature"
                 name="temperature"
-                type="text"
+                type="number"
+                step="0.1"
                 inputMode="decimal"
-                autoComplete="off"
                 value={form.temperature}
-                onChange={(e) => {
-                  const val = e.target.value.replace(/[^0-9.]/g, "");
-                  // 소수점은 하나만 허용
-                  const parts = val.split(".");
-                  const cleanVal = parts.length > 2 ? `${parts[0]}.${parts[1]}` : val;
-                  setForm(prev => ({ ...prev, temperature: cleanVal }));
-                }}
-                onFocus={(e) => e.target.select()}
-                className={inputClass}
+                onChange={handleChange}
+                className={commonInputClass}
                 placeholder="예: 25.5"
               />
             </div>
@@ -352,18 +324,12 @@ export default function CpRecordForm({
               <input
                 id="humidity"
                 name="humidity"
-                type="text"
+                type="number"
+                step="0.1"
                 inputMode="decimal"
-                autoComplete="off"
                 value={form.humidity}
-                onChange={(e) => {
-                  const val = e.target.value.replace(/[^0-9.]/g, "");
-                  const parts = val.split(".");
-                  const cleanVal = parts.length > 2 ? `${parts[0]}.${parts[1]}` : val;
-                  setForm(prev => ({ ...prev, humidity: cleanVal }));
-                }}
-                onFocus={(e) => e.target.select()}
-                className={inputClass}
+                onChange={handleChange}
+                className={commonInputClass}
                 placeholder="예: 60"
               />
             </div>
@@ -381,7 +347,7 @@ export default function CpRecordForm({
               rows={4}
               value={form.notes}
               onChange={handleChange}
-              className="mt-2 block w-full rounded-xl border border-slate-300 px-4 py-4 text-base text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-500"
+              className="mt-2 block w-full rounded-xl border border-slate-300 bg-white px-4 py-4 text-base text-black shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-500"
               placeholder="특이사항을 입력하세요."
             />
           </div>
