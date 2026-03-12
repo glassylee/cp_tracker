@@ -37,6 +37,27 @@
   @apply active:scale-95 transition-transform duration-100;
 }
 
+/* ⚠️ 긴급: 입력창 글자 안 보임 해결 (가장 높은 우선순위) */
+input[type="text"], 
+input[type="number"], 
+input[type="email"], 
+input[type="tel"], 
+textarea {
+  color: #000000 !important;
+  background-color: #ffffff !important;
+  -webkit-text-fill-color: #000000 !important;
+  -webkit-appearance: none !important;
+  opacity: 1 !important;
+  color-scheme: light !important;
+}
+
+input::placeholder, 
+textarea::placeholder {
+  color: #94a3b8 !important; /* slate-400 */
+  -webkit-text-fill-color: #94a3b8 !important;
+  opacity: 1 !important;
+}
+
 /* 글래스모피즘 효과 */
 .glass {
   @apply bg-white/80 backdrop-blur-md border border-white/20;

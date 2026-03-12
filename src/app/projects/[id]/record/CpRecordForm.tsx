@@ -55,10 +55,10 @@ export default function CpRecordForm({ projectId, checkpointId, checkpointName, 
   }, [initialData, materialIds.join(",")]);
 
   const fixedInputStyle: React.CSSProperties = {
-    color: "#000000 !important",
-    backgroundColor: "#ffffff !important",
+    color: "#000000",
+    backgroundColor: "#ffffff",
     WebkitTextFillColor: "#000000",
-    opacity: "1 !important",
+    opacity: 1,
     fontSize: "16px",
   };
 

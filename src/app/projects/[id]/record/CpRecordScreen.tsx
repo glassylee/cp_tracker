@@ -20,10 +20,10 @@ export default function CpRecordScreen({ projectId, checkpointId, materials, ses
   const [localRecentRecords, setLocalRecentRecords] = useState(recentRecords);
 
   const fixedInputStyle: React.CSSProperties = {
-    color: "#000000 !important",
-    backgroundColor: "#ffffff !important",
+    color: "#000000",
+    backgroundColor: "#ffffff",
     WebkitTextFillColor: "#000000",
-    opacity: "1 !important",
+    opacity: 1,
     fontSize: "16px",
   };
 
