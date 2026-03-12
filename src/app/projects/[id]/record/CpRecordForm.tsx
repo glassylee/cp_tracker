@@ -54,14 +54,16 @@ export default function CpRecordForm({ projectId, checkpointId, checkpointName, 
     if (initialData) setForm(initialFormState(materialIds, initialData));
   }, [initialData, materialIds.join(",")]);
 
-  // iOS 및 모바일 브라우저에서 텍스트가 안 보이는 현상을 막기 위한 강력한 스타일
   const fixedInputStyle: React.CSSProperties = {
-    color: "#000000",
-    backgroundColor: "#ffffff",
+    color: "#000000 !important",
+    backgroundColor: "#ffffff !important",
     WebkitTextFillColor: "#000000",
-    opacity: 1,
-    fontSize: "16px", // iOS에서 자동 줌 방지
+    opacity: "1 !important",
+    fontSize: "16px",
   };
+
+  const inputClass = "h-12 w-24 border-2 border-slate-300 rounded-xl px-4 text-center font-bold text-black bg-white !text-black !bg-white";
+  const fullInputClass = "h-14 w-full border-2 border-slate-300 rounded-xl px-4 font-bold text-black bg-white !text-black !bg-white";
 
   const doSubmit = async () => {
     setStatus("submitting");
@@ -120,15 +122,15 @@ export default function CpRecordForm({ projectId, checkpointId, checkpointName, 
               {materials.map((m: any) => (
                 <div key={m.id} className="flex items-center gap-3">
                   <label className="flex-1 text-black font-medium">{m.name}</label>
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    value={form.materialQuantities[m.id] || ""}
-                    onChange={(e) => setForm(p => ({ ...p, materialQuantities: { ...p.materialQuantities, [m.id]: e.target.value } }))}
-                    style={fixedInputStyle}
-                    className="h-12 w-24 border-2 border-slate-300 rounded-xl px-4 text-center font-bold"
-                    placeholder="0"
-                  />
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      value={form.materialQuantities[m.id] || ""}
+                      onChange={(e) => setForm(p => ({ ...p, materialQuantities: { ...p.materialQuantities, [m.id]: e.target.value } }))}
+                      style={fixedInputStyle}
+                      className="h-12 w-24 border-2 border-slate-300 rounded-xl px-4 text-center font-bold text-black bg-white !text-black !bg-white"
+                      placeholder="0"
+                    />
                   <span className="text-slate-500 w-6">{m.unit ?? "개"}</span>
                 </div>
               ))}
@@ -142,7 +144,7 @@ export default function CpRecordForm({ projectId, checkpointId, checkpointName, 
                 value={form.material_quantity}
                 onChange={(e) => setForm(p => ({ ...p, material_quantity: e.target.value }))}
                 style={fixedInputStyle}
-                className="h-14 w-full border-2 border-slate-300 rounded-xl px-4 font-bold"
+                className="h-14 w-full border-2 border-slate-300 rounded-xl px-4 font-bold text-black bg-white !text-black !bg-white"
                 placeholder="숫자 입력"
               />
             </div>
@@ -157,7 +159,7 @@ export default function CpRecordForm({ projectId, checkpointId, checkpointName, 
                 value={form.temperature}
                 onChange={(e) => setForm(p => ({ ...p, temperature: e.target.value }))}
                 style={fixedInputStyle}
-                className="h-12 w-full border-2 border-slate-300 rounded-xl px-4 font-bold"
+                className="h-12 w-full border-2 border-slate-300 rounded-xl px-4 font-bold text-black bg-white !text-black !bg-white"
                 placeholder="25.5"
               />
             </div>
@@ -169,7 +171,7 @@ export default function CpRecordForm({ projectId, checkpointId, checkpointName, 
                 value={form.humidity}
                 onChange={(e) => setForm(p => ({ ...p, humidity: e.target.value }))}
                 style={fixedInputStyle}
-                className="h-12 w-full border-2 border-slate-300 rounded-xl px-4 font-bold"
+                className="h-12 w-full border-2 border-slate-300 rounded-xl px-4 font-bold text-black bg-white !text-black !bg-white"
                 placeholder="60"
               />
             </div>
@@ -181,7 +183,7 @@ export default function CpRecordForm({ projectId, checkpointId, checkpointName, 
               value={form.notes}
               onChange={(e) => setForm(p => ({ ...p, notes: e.target.value }))}
               style={fixedInputStyle}
-              className="w-full border-2 border-slate-300 rounded-xl p-4 font-medium"
+              className="w-full border-2 border-slate-300 rounded-xl p-4 font-medium text-black bg-white !text-black !bg-white"
               rows={3}
               placeholder="내용 입력..."
             />
