@@ -733,19 +733,19 @@ function PreRaceStep({
               {materials.map((m) => (
                 <li key={m.id} className="flex flex-wrap items-center gap-2">
                   <label className="w-28 shrink-0 text-base text-slate-700">{m.name}</label>
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    pattern="\d*"
-                    autoComplete="off"
-                    value={materialQuantities[m.id] ?? ""}
-                    onFocus={(e) => e.target.select()}
-                    onChange={(e) => {
-                      const val = e.target.value.replace(/[^0-9]/g, "");
-                      setMaterialQuantities((prev) => ({ ...prev, [m.id]: val }));
-                    }}
-                    className="min-h-[52px] w-28 rounded-xl border border-slate-300 px-4 py-3 text-base"
-                  />
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      pattern="\d*"
+                      autoComplete="off"
+                      value={materialQuantities[m.id] ?? ""}
+                      onFocus={(e) => e.target.select()}
+                      onChange={(e) => {
+                        const val = e.target.value.replace(/[^0-9]/g, "");
+                        setMaterialQuantities((prev) => ({ ...prev, [m.id]: val }));
+                      }}
+                      className="min-h-[52px] w-28 rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-500"
+                    />
                   <span className="shrink-0 text-base text-slate-600">{m.unit ?? "개"}</span>
                 </li>
               ))}
@@ -765,7 +765,7 @@ function PreRaceStep({
                 const val = e.target.value.replace(/[^0-9]/g, "");
                 setMaterialQuantity(val);
               }}
-              className={inputClass}
+              className="mt-2 block w-full min-h-[52px] rounded-xl border border-slate-300 bg-white px-4 py-4 text-base text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-500"
               placeholder="예: 100"
             />
           </div>
@@ -898,7 +898,7 @@ function FirstRunnerStep({
                 const cleanVal = parts.length > 2 ? `${parts[0]}.${parts[1]}` : val;
                 setTemperature(cleanVal);
               }}
-              className={inputClass}
+              className="mt-2 block w-full min-h-[52px] rounded-xl border border-slate-300 bg-white px-4 py-4 text-base text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-500"
               placeholder="예: 25.5"
             />
           </div>
@@ -916,7 +916,7 @@ function FirstRunnerStep({
                 const cleanVal = parts.length > 2 ? `${parts[0]}.${parts[1]}` : val;
                 setHumidity(cleanVal);
               }}
-              className={inputClass}
+              className="mt-2 block w-full min-h-[52px] rounded-xl border border-slate-300 bg-white px-4 py-4 text-base text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-500"
               placeholder="예: 60"
             />
           </div>
@@ -928,19 +928,19 @@ function FirstRunnerStep({
               {materials.map((m) => (
                 <li key={m.id} className="flex flex-wrap items-center gap-2">
                   <label className="w-28 shrink-0 text-base text-slate-700">{m.name}</label>
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    pattern="\d*"
-                    autoComplete="off"
-                    value={materialQuantities[m.id] ?? ""}
-                    onFocus={(e) => e.target.select()}
-                    onChange={(e) => {
-                      const val = e.target.value.replace(/[^0-9]/g, "");
-                      setMaterialQuantities((prev) => ({ ...prev, [m.id]: val }));
-                    }}
-                    className="min-h-[52px] w-28 rounded-xl border border-slate-300 px-4 py-3 text-base"
-                  />
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      pattern="\d*"
+                      autoComplete="off"
+                      value={materialQuantities[m.id] ?? ""}
+                      onFocus={(e) => e.target.select()}
+                      onChange={(e) => {
+                        const val = e.target.value.replace(/[^0-9]/g, "");
+                        setMaterialQuantities((prev) => ({ ...prev, [m.id]: val }));
+                      }}
+                      className="min-h-[52px] w-28 rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-500"
+                    />
                   <span className="shrink-0 text-base text-slate-600">{m.unit ?? "개"}</span>
                 </li>
               ))}
@@ -960,7 +960,7 @@ function FirstRunnerStep({
                 const val = e.target.value.replace(/[^0-9]/g, "");
                 setMaterialQuantity(val);
               }}
-              className={inputClass}
+              className="mt-2 block w-full min-h-[52px] rounded-xl border border-slate-300 bg-white px-4 py-4 text-base text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-500"
               placeholder="예: 100"
             />
           </div>
@@ -1241,7 +1241,7 @@ function FinishBlock({
                       const val = e.target.value.replace(/[^0-9]/g, "");
                       setFinalQuantities((prev) => ({ ...prev, [m.id]: val }));
                     }}
-                    className="min-h-[52px] w-28 rounded-xl border border-slate-300 px-4 py-3 text-base"
+                    className="min-h-[52px] w-28 rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-500"
                     placeholder="0"
                   />
                   <span className="shrink-0 text-base text-slate-600">{m.unit ?? "개"}</span>

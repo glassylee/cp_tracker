@@ -233,7 +233,7 @@ export default function CpRecordForm({
   };
 
   const inputClass =
-    "mt-2 block w-full min-h-[52px] rounded-xl border border-slate-300 px-4 py-4 text-base text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-500";
+    "mt-2 block w-full min-h-[52px] rounded-xl border border-slate-300 bg-white px-4 py-4 text-base text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-500";
 
   return (
     <>
@@ -273,7 +273,7 @@ export default function CpRecordForm({
                         handleMaterialChange(m.id, val);
                       }}
                       onFocus={(e) => e.target.select()}
-                      className="min-h-[52px] w-28 rounded-xl border border-slate-300 px-4 py-3 text-base text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-500"
+                      className="min-h-[52px] w-28 rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-500"
                       placeholder="0"
                     />
                     <span className="shrink-0 text-base text-slate-600">{m.unit ?? "개"}</span>
