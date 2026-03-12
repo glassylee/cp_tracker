@@ -51,14 +51,6 @@ export default async function ProjectDetailPage({ params }: Props) {
               </p>
             )}
           </div>
-          <div className="flex items-center gap-3">
-            <Link
-              href={`/projects/${id}/review`}
-              className="btn-active inline-flex h-12 items-center justify-center rounded-full bg-[#F5F5F7] px-8 text-[14px] font-semibold text-[#1D1D1F] transition-all hover:bg-[#E8E8ED]"
-            >
-              📊 리포트/리뷰 보기
-            </Link>
-          </div>
         </div>
       </div>
 
