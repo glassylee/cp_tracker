@@ -8,6 +8,7 @@
   --bg-dark: #0F172A;
   --bg-card: #1E293B;
   --text-main: #F8FAFC;
+  color-scheme: light !important; /* 전체 다크모드 차단 */
 }
 
 @layer base {
@@ -16,7 +17,7 @@
   }
 }
 
-/* 🚨 긴급: 모든 입력창 글자색 강제 고정 (최종 병기) */
+/* ⚠️ 모든 입력창 강제 라이트 테마 (시스템 색상 무시) */
 input, 
 textarea, 
 select {
@@ -27,25 +28,26 @@ select {
   appearance: none !important;
   opacity: 1 !important;
   color-scheme: light !important;
+  box-shadow: none !important;
+  border-radius: 0.75rem;
+}
+
+/* ⚠️ iOS Safari 등에서 입력란 내부 흰색 글자가 박히는 것을 차단 */
+* {
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
 }
 
 input::placeholder, 
 textarea::placeholder {
   color: #94a3b8 !important;
   -webkit-text-fill-color: #94a3b8 !important;
-  opacity: 1 !important;
 }
 
 .record-app-shell {
   @apply bg-[#0F172A] text-white;
-  padding-top: env(safe-area-inset-top, 0);
-  padding-bottom: env(safe-area-inset-bottom, 0);
 }
 
 .btn-active {
   @apply active:scale-95 transition-transform duration-100;
-}
-
-.glass {
-  @apply bg-white/80 backdrop-blur-md border border-white/20;
 }
