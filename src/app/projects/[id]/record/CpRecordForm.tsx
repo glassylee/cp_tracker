@@ -265,10 +265,13 @@ export default function CpRecordForm({
                       id={`mat-${m.id}`}
                       type="number"
                       inputMode="numeric"
+                      pattern="\d*"
                       min={0}
                       step={1}
+                      autoComplete="off"
                       value={form.materialQuantities[m.id] ?? ""}
                       onChange={(e) => handleMaterialChange(m.id, e.target.value)}
+                      onFocus={(e) => e.target.select()}
                       className="min-h-[52px] w-28 rounded-xl border border-slate-300 px-4 py-3 text-base text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-500"
                       placeholder="0"
                     />
@@ -293,10 +296,13 @@ export default function CpRecordForm({
                 name="material_quantity"
                 type="number"
                 inputMode="numeric"
+                pattern="\d*"
                 min={0}
                 step={1}
+                autoComplete="off"
                 value={form.material_quantity}
                 onChange={handleChange}
+                onFocus={(e) => e.target.select()}
                 className={inputClass}
                 placeholder={recordStage === "operating" ? "소모된 양 입력" : "예: 100"}
               />
@@ -319,9 +325,12 @@ export default function CpRecordForm({
                 id="temperature"
                 name="temperature"
                 type="number"
+                inputMode="decimal"
                 step="0.1"
+                autoComplete="off"
                 value={form.temperature}
                 onChange={handleChange}
+                onFocus={(e) => e.target.select()}
                 className={inputClass}
                 placeholder="예: 25.5"
               />
@@ -337,11 +346,14 @@ export default function CpRecordForm({
                 id="humidity"
                 name="humidity"
                 type="number"
+                inputMode="decimal"
                 min="0"
                 max="100"
                 step="0.1"
+                autoComplete="off"
                 value={form.humidity}
                 onChange={handleChange}
+                onFocus={(e) => e.target.select()}
                 className={inputClass}
                 placeholder="예: 60"
               />

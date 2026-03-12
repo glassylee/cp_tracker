@@ -736,9 +736,12 @@ function PreRaceStep({
                   <input
                     type="number"
                     inputMode="numeric"
+                    pattern="\d*"
                     min={0}
                     step={1}
+                    autoComplete="off"
                     value={materialQuantities[m.id] ?? ""}
+                    onFocus={(e) => e.target.select()}
                     onChange={(e) =>
                       setMaterialQuantities((prev) => ({ ...prev, [m.id]: e.target.value }))
                     }
@@ -754,8 +757,12 @@ function PreRaceStep({
             <label className="block text-base font-medium text-slate-700">최초 물자량</label>
             <input
               type="number"
+              inputMode="numeric"
+              pattern="\d*"
               min={0}
+              autoComplete="off"
               value={materialQuantity}
+              onFocus={(e) => e.target.select()}
               onChange={(e) => setMaterialQuantity(e.target.value)}
               className={inputClass}
               placeholder="예: 100"
@@ -880,8 +887,11 @@ function FirstRunnerStep({
             <label className="block text-base font-medium text-slate-700">온도 (°C)</label>
             <input
               type="number"
+              inputMode="decimal"
               step={0.1}
+              autoComplete="off"
               value={temperature}
+              onFocus={(e) => e.target.select()}
               onChange={(e) => setTemperature(e.target.value)}
               className={inputClass}
               placeholder="예: 25.5"
@@ -891,10 +901,13 @@ function FirstRunnerStep({
             <label className="block text-base font-medium text-slate-700">습도 (%)</label>
             <input
               type="number"
+              inputMode="decimal"
               min={0}
               max={100}
               step={0.1}
+              autoComplete="off"
               value={humidity}
+              onFocus={(e) => e.target.select()}
               onChange={(e) => setHumidity(e.target.value)}
               className={inputClass}
               placeholder="예: 60"
@@ -911,9 +924,12 @@ function FirstRunnerStep({
                   <input
                     type="number"
                     inputMode="numeric"
+                    pattern="\d*"
                     min={0}
                     step={1}
+                    autoComplete="off"
                     value={materialQuantities[m.id] ?? ""}
+                    onFocus={(e) => e.target.select()}
                     onChange={(e) =>
                       setMaterialQuantities((prev) => ({ ...prev, [m.id]: e.target.value }))
                     }
@@ -1206,9 +1222,12 @@ function FinishBlock({
                   <input
                     type="number"
                     inputMode="numeric"
+                    pattern="\d*"
                     min={0}
                     step={1}
+                    autoComplete="off"
                     value={finalQuantities[m.id] ?? ""}
+                    onFocus={(e) => e.target.select()}
                     onChange={(e) =>
                       setFinalQuantities((prev) => ({ ...prev, [m.id]: e.target.value }))
                     }
