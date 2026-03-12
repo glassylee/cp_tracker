@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import RecordPageClient from "./RecordPageClient";
+import RecordPageClient, { type Stage } from "./RecordPageClient";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -8,9 +8,9 @@ type Props = {
 
 const VALID_STAGES = ["ready", "first_arrival", "recording", "closed"] as const;
 
-function normalizeStage(stage: unknown): string {
-  if (typeof stage === "string" && VALID_STAGES.includes(stage as (typeof VALID_STAGES)[number])) {
-    return stage;
+function normalizeStage(stage: unknown): Stage {
+  if (typeof stage === "string" && VALID_STAGES.includes(stage as Stage)) {
+    return stage as Stage;
   }
   return "ready";
 }
@@ -147,7 +147,7 @@ export default async function CpRecordPage(props: Props) {
       console.error("[record/page] materials parse error:", e);
     }
 
-    let session = { stage: "ready", first_arrival_at: null as string | null, closed_at: null as string | null };
+    let session: { stage: Stage; first_arrival_at: string | null; closed_at: string | null } = { stage: "ready", first_arrival_at: null, closed_at: null };
     try {
       const { data: sessionData } = await supabase
         .from("checkpoint_sessions")

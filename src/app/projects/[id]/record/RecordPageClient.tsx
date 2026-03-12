@@ -6,8 +6,10 @@ import CpRecordScreen from "./CpRecordScreen";
 /** 기록 폼은 hasPassword일 때 반드시 비밀번호 검증 통과 후에만 렌더링됨. 직접 URL 접근 시에도 비밀번호 없으면 내용 노출 안 됨. */
 const STORAGE_KEY = (cpId: string) => `cp_verified_${cpId}`;
 
+export type Stage = "ready" | "first_arrival" | "recording" | "closed";
+
 type Session = {
-  stage: string;
+  stage: Stage;
   first_arrival_at: string | null;
   closed_at: string | null;
 };
