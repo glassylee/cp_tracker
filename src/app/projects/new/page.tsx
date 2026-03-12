@@ -9,9 +9,10 @@ export default function NewProjectPage() {
     const description = (formData.get("description") as string) || null;
     const event_date = (formData.get("event_date") as string) || null;
     const dashboard_password = (formData.get("dashboard_password") as string)?.trim() || null;
+    const checkpointCount = parseInt(formData.get("checkpoint_count") as string) || 0;
     if (!name?.trim()) return;
     const supabase = await createClient();
-    const { data } = await supabase
+    const { data: project } = await supabase
       .from("projects")
       .insert({
         name: name.trim(),
@@ -21,7 +22,18 @@ export default function NewProjectPage() {
       })
       .select("id")
       .single();
-    if (data?.id) redirect(`/projects/${data.id}`);
+
+    if (project?.id && checkpointCount > 0) {
+      const checkpoints = Array.from({ length: checkpointCount }, (_, i) => ({
+        project_id: project.id,
+        name: `CP${i + 1}`,
+        code: `CP${i + 1}`,
+        sort_order: i + 1,
+      }));
+      await supabase.from("checkpoints").insert(checkpoints);
+    }
+
+    if (project?.id) redirect(`/projects/${project.id}`);
   }
 
   return (
@@ -95,6 +107,24 @@ export default function NewProjectPage() {
                 autoComplete="new-password"
                 className="block w-full rounded-2xl border border-[#D2D2D7] bg-[#F5F5F7] px-5 py-4 text-[15px] text-[#1D1D1F] transition-all focus:bg-white focus:border-[#0071E3] focus:outline-none focus:ring-4 focus:ring-[#0071E3]/10"
                 placeholder="미설정 시 바로 접속"
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="checkpoint_count"
+                className="block text-[13px] font-semibold text-[#1D1D1F] mb-2 px-1"
+              >
+                CP(체크포인트) 개수
+              </label>
+              <input
+                id="checkpoint_count"
+                name="checkpoint_count"
+                type="number"
+                min="0"
+                max="30"
+                className="block w-full rounded-2xl border border-[#D2D2D7] bg-[#F5F5F7] px-5 py-4 text-[15px] text-[#1D1D1F] transition-all focus:bg-white focus:border-[#0071E3] focus:outline-none focus:ring-4 focus:ring-[#0071E3]/10"
+                placeholder="예: 5 (CP1~CP5 자동 생성)"
               />
             </div>
 
