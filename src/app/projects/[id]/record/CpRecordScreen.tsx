@@ -17,8 +17,10 @@ export default function CpRecordScreen({ projectId, checkpointId, materials, ses
   const router = useRouter();
   const [stage, setStage] = useState<Stage>(session.stage);
   const [showClosingForm, setShowClosingForm] = useState(false);
+  const [showEmergencyModal, setShowEmergencyModal] = useState(false);
   const [localRecentRecords, setLocalRecentRecords] = useState(recentRecords);
 
+  // ⚠️ 전역적으로 사용할 강제 라이트 모드 스타일
   const forceLightStyle: React.CSSProperties = {
     color: 'black',
     backgroundColor: 'white',
@@ -69,12 +71,24 @@ export default function CpRecordScreen({ projectId, checkpointId, materials, ses
         ))}
       </nav>
 
-      {stage === "ready" && <PreRaceStep checkpointId={checkpointId} materials={materials} onSuccess={() => updateStage("first_arrival")} refresh={refreshData} forceLightStyle={forceLightStyle} />}
-      {stage === "first_arrival" && <FirstRunnerStep checkpointId={checkpointId} materials={materials} onSuccess={() => updateStage("recording")} refresh={refreshData} forceLightStyle={forceLightStyle} />}
+      {stage === "ready" && (
+        <>
+          <PreRaceStep checkpointId={checkpointId} materials={materials} onSuccess={() => updateStage("first_arrival")} refresh={refreshData} forceLightStyle={forceLightStyle} />
+          <button onClick={() => setShowEmergencyModal(true)} className="h-14 w-full rounded-2xl border-2 border-red-500 bg-red-50 text-red-700 font-bold">🚨 긴급/특이사항 기록</button>
+        </>
+      )}
+
+      {stage === "first_arrival" && (
+        <>
+          <FirstRunnerStep checkpointId={checkpointId} materials={materials} onSuccess={() => updateStage("recording")} refresh={refreshData} forceLightStyle={forceLightStyle} />
+          <button onClick={() => setShowEmergencyModal(true)} className="h-14 w-full rounded-2xl border-2 border-red-500 bg-red-50 text-red-700 font-bold">🚨 긴급/특이사항 기록</button>
+        </>
+      )}
       
       {stage === "recording" && !showClosingForm && (
         <div className="space-y-6">
           <CpRecordForm projectId={projectId} checkpointId={checkpointId} materials={materials} onRecordSaved={refreshData} recordStage="operating" />
+          <button onClick={() => setShowEmergencyModal(true)} className="h-14 w-full rounded-2xl border-2 border-red-500 bg-red-50 text-red-700 font-bold">🚨 긴급/특이사항 기록</button>
           <button onClick={() => setShowClosingForm(true)} className="h-14 w-full rounded-2xl border-2 border-slate-300 bg-white text-slate-600 font-bold hover:bg-slate-50">운영 종료 절차 시작하기</button>
         </div>
       )}
@@ -84,6 +98,15 @@ export default function CpRecordScreen({ projectId, checkpointId, materials, ses
           <button onClick={() => setShowClosingForm(false)} className="text-sm font-bold text-slate-500 underline px-2">← 실시간 운영 화면으로 돌아가기</button>
           <FinishBlock checkpointId={checkpointId} materials={materials} onSuccess={() => updateStage("closed")} refresh={refreshData} forceLightStyle={forceLightStyle} />
         </div>
+      )}
+
+      {showEmergencyModal && (
+        <EmergencyEventBlock 
+          checkpointId={checkpointId} 
+          onClose={() => setShowEmergencyModal(false)} 
+          onSaved={() => { setShowEmergencyModal(false); refreshData(); }} 
+          forceLightStyle={forceLightStyle}
+        />
       )}
 
       <RecentRecordsList records={localRecentRecords} />
@@ -135,12 +158,13 @@ function PreRaceStep({ checkpointId, materials, onSuccess, refresh, forceLightSt
 function FirstRunnerStep({ checkpointId, materials, onSuccess, refresh, forceLightStyle }: any) {
   const [qty, setQty] = useState<Record<string, string>>(() => Object.fromEntries(materials.map((m: any) => [m.id, ""])));
   const [temp, setTemp] = useState("");
+  const [hum, setHum] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     setLoading(true);
-    const payload = { record_stage: "first_runner", temperature: Number(temp) || null, material_quantities: materials.map((m: any) => ({ checkpoint_material_id: m.id, quantity: Number(qty[m.id]) || 0 })) };
+    const payload = { record_stage: "first_runner", temperature: Number(temp) || null, humidity: Number(hum) || null, material_quantities: materials.map((m: any) => ({ checkpoint_material_id: m.id, quantity: Number(qty[m.id]) || 0 })) };
     const res = await fetch("/api/cp-records", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ checkpoint_id: checkpointId, ...payload }) });
     if (res.ok) { await onSuccess(); refresh(); }
     setLoading(false);
@@ -153,17 +177,15 @@ function FirstRunnerStep({ checkpointId, materials, onSuccess, refresh, forceLig
         <p className="text-sm text-slate-500 mt-1 font-medium">1등 선수가 도착했습니다. 현재 정보를 입력하세요.</p>
       </div>
       <div className="space-y-6">
-        <div>
-          <label className="block text-sm font-black text-slate-700 mb-2">현재 온도 (°C)</label>
-          <input 
-            type="text" 
-            inputMode="decimal" 
-            value={temp} 
-            onChange={e => setTemp(e.target.value)} 
-            style={forceLightStyle}
-            className="h-14 w-full border-2 border-slate-300 rounded-2xl px-6 font-black text-xl !text-black !bg-white" 
-            placeholder="예: 25.5" 
-          />
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-black text-slate-700 mb-2">온도 (°C)</label>
+            <input type="text" inputMode="decimal" value={temp} onChange={e => setTemp(e.target.value)} style={forceLightStyle} className="h-14 w-full border-2 border-slate-300 rounded-2xl px-6 font-black text-xl !text-black !bg-white" placeholder="25.5" />
+          </div>
+          <div>
+            <label className="block text-sm font-black text-slate-700 mb-2">습도 (%)</label>
+            <input type="text" inputMode="decimal" value={hum} onChange={e => setHum(e.target.value)} style={forceLightStyle} className="h-14 w-full border-2 border-slate-300 rounded-2xl px-6 font-black text-xl !text-black !bg-white" placeholder="60" />
+          </div>
         </div>
         <div className="pt-4 border-t border-slate-100 space-y-5">
           <label className="block text-sm font-black text-slate-700">현재 물자 잔량</label>
@@ -185,6 +207,50 @@ function FirstRunnerStep({ checkpointId, materials, onSuccess, refresh, forceLig
       </div>
       <button disabled={loading} className="h-16 w-full bg-slate-800 text-white rounded-2xl font-black text-lg shadow-xl">1등 도착 확인 (운영 시작)</button>
     </form>
+  );
+}
+
+function EmergencyEventBlock({ checkpointId, onClose, onSaved, forceLightStyle }: any) {
+  const [type, setType] = useState("부상");
+  const [notes, setNotes] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+    setLoading(true);
+    await fetch("/api/cp-records", { 
+      method: "POST", 
+      headers: { "Content-Type": "application/json" }, 
+      body: JSON.stringify({ checkpoint_id: checkpointId, notes: `[${type}] ${notes}`, is_emergency: true }) 
+    });
+    onSaved();
+    setLoading(false);
+  };
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
+      <form onSubmit={handleSubmit} className="w-full max-w-sm rounded-3xl bg-white p-8 shadow-2xl space-y-6">
+        <h3 className="text-xl font-black text-black">긴급/특이사항 기록</h3>
+        <select value={type} onChange={e => setType(e.target.value)} style={forceLightStyle} className="w-full h-14 border-2 border-slate-300 rounded-2xl px-4 font-bold !text-black !bg-white">
+          <option value="부상">🩹 부상 발생</option>
+          <option value="병목">🛑 병목 현상</option>
+          <option value="컴플레인">🗣️ 컴플레인</option>
+          <option value="기타">📝 기타 사항</option>
+        </select>
+        <textarea 
+          value={notes} 
+          onChange={e => setNotes(e.target.value)} 
+          style={forceLightStyle} 
+          className="w-full border-2 border-slate-300 rounded-2xl p-4 font-bold !text-black !bg-white" 
+          rows={3} 
+          placeholder="상세 내용을 입력하세요."
+        />
+        <div className="flex gap-3">
+          <button type="button" onClick={onClose} className="flex-1 h-14 rounded-2xl border-2 border-slate-200 text-slate-600 font-bold">취소</button>
+          <button type="submit" disabled={loading} className="flex-1 h-14 rounded-2xl bg-red-600 text-white font-bold">저장하기</button>
+        </div>
+      </form>
+    </div>
   );
 }
 
