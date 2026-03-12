@@ -127,7 +127,10 @@ export default function CpRecordScreen({ projectId, checkpointId, materials, ses
           {/* 타이머 표시 */}
           <div className="rounded-2xl border-2 border-slate-200 bg-white p-6 text-center shadow-sm">
             {countdownSeconds === null ? (
-              <p className="text-sm font-bold text-slate-500">기록을 시작하면 10분 타이머가 작동합니다.</p>
+              <>
+                <p className="text-sm font-bold text-slate-500 mb-2">기록을 시작하면 10분 타이머가 작동합니다.</p>
+                <p className="text-xs text-slate-400">첫 기록을 제출해 주세요.</p>
+              </>
             ) : countdownSeconds === 0 ? (
               <p className="text-xl font-black text-red-600 animate-pulse">📢 지금 바로 기록하세요!</p>
             ) : (
@@ -140,7 +143,10 @@ export default function CpRecordScreen({ projectId, checkpointId, materials, ses
             )}
           </div>
 
-          <CpRecordForm projectId={projectId} checkpointId={checkpointId} materials={materials} onRecordSaved={refreshData} recordStage="operating" />
+          {(countdownSeconds === null || countdownSeconds === 0) && (
+            <CpRecordForm projectId={projectId} checkpointId={checkpointId} materials={materials} onRecordSaved={refreshData} recordStage="operating" />
+          )}
+          
           <button onClick={() => setShowEmergencyModal(true)} className="h-14 w-full rounded-2xl border-2 border-red-500 bg-red-50 text-red-700 font-bold shadow-sm">🚨 긴급/특이사항 기록</button>
           <button onClick={() => setShowClosingForm(true)} className="h-14 w-full rounded-2xl border-2 border-slate-300 bg-white text-slate-600 font-bold hover:bg-slate-50 shadow-sm">운영 종료 절차 시작하기</button>
         </div>
