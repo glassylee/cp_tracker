@@ -217,15 +217,26 @@ function FirstRunnerStep({ checkpointId, materials, onSuccess, refresh, forceLig
   const [qty, setQty] = useState<Record<string, string>>(() => Object.fromEntries(materials.map((m: any) => [m.id, ""])));
   const [temp, setTemp] = useState("");
   const [hum, setHum] = useState("");
+  const [video, setVideo] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     setLoading(true);
-    const payload = { record_stage: "first_runner", temperature: Number(temp) || null, humidity: Number(hum) || null, material_quantities: materials.map((m: any) => ({ checkpoint_material_id: m.id, quantity: Number(qty[m.id]) || 0 })) };
-    const res = await fetch("/api/cp-records", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ checkpoint_id: checkpointId, ...payload }) });
-    if (res.ok) { await onSuccess(); refresh(); }
-    setLoading(false);
+    try {
+      const videoUrl = video ? await uploadVideo(video, checkpointId) : null;
+      const payload: any = { 
+        record_stage: "first_runner", 
+        temperature: Number(temp) || null, 
+        humidity: Number(hum) || null, 
+        video_url: videoUrl,
+        material_quantities: materials.map((m: any) => ({ checkpoint_material_id: m.id, quantity: Number(qty[m.id]) || 0 })) 
+      };
+      const res = await fetch("/api/cp-records", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ checkpoint_id: checkpointId, ...payload }) });
+      if (res.ok) { await onSuccess(); refresh(); }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -262,6 +273,43 @@ function FirstRunnerStep({ checkpointId, materials, onSuccess, refresh, forceLig
             </div>
           ))}
         </div>
+
+        <div className="pt-4 border-t border-slate-100">
+          <label className="block text-sm font-bold text-slate-700 mb-3">1등 도착 영상 (선택)</label>
+          {!video ? (
+            <label className="flex min-h-[100px] cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 transition hover:bg-slate-100">
+              <div className="flex flex-col items-center gap-2 text-slate-500">
+                <span className="text-3xl">🎥</span>
+                <span className="text-sm font-bold tracking-tight">현장 촬영 / 선택</span>
+              </div>
+              <input
+                type="file"
+                accept="video/*"
+                capture="environment"
+                onChange={(e) => setVideo(e.target.files?.[0] || null)}
+                className="hidden"
+              />
+            </label>
+          ) : (
+            <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-slate-900 p-2">
+              <video 
+                src={URL.createObjectURL(video)} 
+                className="aspect-video w-full rounded-xl object-cover"
+                controls
+              />
+              <div className="mt-2 flex items-center justify-between px-2 pb-1">
+                <p className="truncate text-xs font-medium text-slate-400">{video.name}</p>
+                <button
+                  type="button"
+                  onClick={() => setVideo(null)}
+                  className="text-xs font-black text-red-400 hover:text-red-300"
+                >
+                  다시 촬영
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
       <button disabled={loading} className="h-16 w-full bg-slate-800 text-white rounded-2xl font-black text-lg shadow-xl">1등 도착 확인 (운영 시작)</button>
     </form>
@@ -271,18 +319,28 @@ function FirstRunnerStep({ checkpointId, materials, onSuccess, refresh, forceLig
 function EmergencyEventBlock({ checkpointId, onClose, onSaved, forceLightStyle }: any) {
   const [type, setType] = useState("부상");
   const [notes, setNotes] = useState("");
+  const [video, setVideo] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     setLoading(true);
-    await fetch("/api/cp-records", { 
-      method: "POST", 
-      headers: { "Content-Type": "application/json" }, 
-      body: JSON.stringify({ checkpoint_id: checkpointId, notes: `[${type}] ${notes}`, is_emergency: true }) 
-    });
-    onSaved();
-    setLoading(false);
+    try {
+      const videoUrl = video ? await uploadVideo(video, checkpointId) : null;
+      await fetch("/api/cp-records", { 
+        method: "POST", 
+        headers: { "Content-Type": "application/json" }, 
+        body: JSON.stringify({ 
+          checkpoint_id: checkpointId, 
+          notes: `[${type}] ${notes}`, 
+          is_emergency: true,
+          video_url: videoUrl
+        }) 
+      });
+      onSaved();
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -303,6 +361,44 @@ function EmergencyEventBlock({ checkpointId, onClose, onSaved, forceLightStyle }
           rows={3} 
           placeholder="상세 내용을 입력하세요."
         />
+
+        <div>
+          <label className="block text-sm font-bold text-slate-700 mb-2">현장 상황 영상 (선택)</label>
+          {!video ? (
+            <label className="flex min-h-[80px] cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 transition hover:bg-slate-100">
+              <div className="flex flex-col items-center gap-1 text-slate-500">
+                <span className="text-2xl">🎥</span>
+                <span className="text-xs font-bold">영상 촬영 / 선택</span>
+              </div>
+              <input
+                type="file"
+                accept="video/*"
+                capture="environment"
+                onChange={(e) => setVideo(e.target.files?.[0] || null)}
+                className="hidden"
+              />
+            </label>
+          ) : (
+            <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-slate-900 p-2">
+              <video 
+                src={URL.createObjectURL(video)} 
+                className="aspect-video w-full rounded-xl object-cover"
+                controls
+              />
+              <button
+                type="button"
+                onClick={() => setVideo(null)}
+                className="absolute top-4 right-4 bg-red-500 text-white rounded-full p-1 shadow-lg"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+          )}
+        </div>
+
         <div className="flex gap-3">
           <button type="button" onClick={onClose} className="flex-1 h-14 rounded-2xl border-2 border-slate-200 text-slate-600 font-bold">취소</button>
           <button type="submit" disabled={loading} className="flex-1 h-14 rounded-2xl bg-red-600 text-white font-bold">저장하기</button>
@@ -314,15 +410,24 @@ function EmergencyEventBlock({ checkpointId, onClose, onSaved, forceLightStyle }
 
 function FinishBlock({ checkpointId, materials, onSuccess, refresh, forceLightStyle }: any) {
   const [qty, setQty] = useState<Record<string, string>>(() => Object.fromEntries(materials.map((m: any) => [m.id, ""])));
+  const [video, setVideo] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     setLoading(true);
-    const payload = { record_stage: "finished", material_quantities: materials.map((m: any) => ({ checkpoint_material_id: m.id, quantity: Number(qty[m.id]) || 0 })) };
-    const res = await fetch("/api/cp-records", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ checkpoint_id: checkpointId, ...payload }) });
-    if (res.ok) { await onSuccess(); refresh(); }
-    setLoading(false);
+    try {
+      const videoUrl = video ? await uploadVideo(video, checkpointId) : null;
+      const payload = { 
+        record_stage: "finished", 
+        video_url: videoUrl,
+        material_quantities: materials.map((m: any) => ({ checkpoint_material_id: m.id, quantity: Number(qty[m.id]) || 0 })) 
+      };
+      const res = await fetch("/api/cp-records", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ checkpoint_id: checkpointId, ...payload }) });
+      if (res.ok) { await onSuccess(); refresh(); }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -347,6 +452,44 @@ function FinishBlock({ checkpointId, materials, onSuccess, refresh, forceLightSt
           </div>
         ))}
       </div>
+
+      <div className="pt-4 border-t border-slate-100">
+        <label className="block text-sm font-bold text-slate-700 mb-3">철수 현장 영상 (선택)</label>
+        {!video ? (
+          <label className="flex min-h-[100px] cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 transition hover:bg-slate-100">
+            <div className="flex flex-col items-center gap-2 text-slate-500">
+              <span className="text-3xl">🎥</span>
+              <span className="text-sm font-bold tracking-tight">현장 촬영 / 선택</span>
+            </div>
+            <input
+              type="file"
+              accept="video/*"
+              capture="environment"
+              onChange={(e) => setVideo(e.target.files?.[0] || null)}
+              className="hidden"
+            />
+          </label>
+        ) : (
+          <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-slate-900 p-2">
+            <video 
+              src={URL.createObjectURL(video)} 
+              className="aspect-video w-full rounded-xl object-cover"
+              controls
+            />
+            <div className="mt-2 flex items-center justify-between px-2 pb-1">
+              <p className="truncate text-xs font-medium text-slate-400">{video.name}</p>
+              <button
+                type="button"
+                onClick={() => setVideo(null)}
+                className="text-xs font-black text-red-400 hover:text-red-300"
+              >
+                다시 촬영
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
       <button disabled={loading} className="h-16 w-full bg-red-600 text-white rounded-2xl font-black text-lg shadow-xl">철수 완료 (기록 종료)</button>
     </form>
   );
