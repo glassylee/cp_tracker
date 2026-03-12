@@ -13,6 +13,16 @@ const TIMELINE_STEPS: { key: Stage; label: string }[] = [
   { key: "closed", label: "종료" },
 ];
 
+async function uploadVideo(file: File, checkpointId: string): Promise<string | null> {
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("checkpointId", checkpointId);
+  const res = await fetch("/api/upload", { method: "POST", body: formData });
+  if (!res.ok) return null;
+  const { url } = await res.json();
+  return url ?? null;
+}
+
 export default function CpRecordScreen({ projectId, checkpointId, materials, session, recentRecords }: any) {
   const router = useRouter();
   const [stage, setStage] = useState<Stage>(session.stage);
@@ -117,15 +127,24 @@ export default function CpRecordScreen({ projectId, checkpointId, materials, ses
 
 function PreRaceStep({ checkpointId, materials, onSuccess, refresh, forceLightStyle }: any) {
   const [qty, setQty] = useState<Record<string, string>>(() => Object.fromEntries(materials.map((m: any) => [m.id, ""])));
+  const [video, setVideo] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     setLoading(true);
-    const payload = { record_stage: "pre_race", material_quantities: materials.map((m: any) => ({ checkpoint_material_id: m.id, quantity: Number(qty[m.id]) || 0 })) };
-    const res = await fetch("/api/cp-records", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ checkpoint_id: checkpointId, ...payload }) });
-    if (res.ok) { await onSuccess(); refresh(); }
-    setLoading(false);
+    try {
+      const videoUrl = video ? await uploadVideo(video, checkpointId) : null;
+      const payload = { 
+        record_stage: "pre_race", 
+        video_url: videoUrl,
+        material_quantities: materials.map((m: any) => ({ checkpoint_material_id: m.id, quantity: Number(qty[m.id]) || 0 })) 
+      };
+      const res = await fetch("/api/cp-records", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ checkpoint_id: checkpointId, ...payload }) });
+      if (res.ok) { await onSuccess(); refresh(); }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -151,6 +170,44 @@ function PreRaceStep({ checkpointId, materials, onSuccess, refresh, forceLightSt
           </div>
         ))}
       </div>
+
+      <div className="pt-4 border-t border-slate-100">
+        <label className="block text-sm font-bold text-slate-700 mb-3">세팅 완료 영상 (선택)</label>
+        {!video ? (
+          <label className="flex min-h-[100px] cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 transition hover:bg-slate-100">
+            <div className="flex flex-col items-center gap-2 text-slate-500">
+              <span className="text-3xl">🎥</span>
+              <span className="text-sm font-bold tracking-tight">현장 촬영 / 선택</span>
+            </div>
+            <input
+              type="file"
+              accept="video/*"
+              capture="environment"
+              onChange={(e) => setVideo(e.target.files?.[0] || null)}
+              className="hidden"
+            />
+          </label>
+        ) : (
+          <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-slate-900 p-2">
+            <video 
+              src={URL.createObjectURL(video)} 
+              className="aspect-video w-full rounded-xl object-cover"
+              controls
+            />
+            <div className="mt-2 flex items-center justify-between px-2 pb-1">
+              <p className="truncate text-xs font-medium text-slate-400">{video.name}</p>
+              <button
+                type="button"
+                onClick={() => setVideo(null)}
+                className="text-xs font-black text-red-400 hover:text-red-300"
+              >
+                다시 촬영
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
       <button disabled={loading} className="h-16 w-full bg-slate-800 text-white rounded-2xl font-black text-lg shadow-xl active:scale-[0.98] transition-transform">{loading ? "처리 중..." : "준비 완료 (다음 단계로)"}</button>
     </form>
   );

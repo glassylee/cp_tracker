@@ -180,6 +180,45 @@ export default function CpRecordForm({ projectId, checkpointId, materials, onRec
               placeholder="내용 입력..."
             />
           </div>
+
+          <div>
+            <label className="block text-sm font-bold text-slate-700 mb-2">영상 기록</label>
+            {!form.video ? (
+              <label className="flex min-h-[100px] cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 transition hover:bg-slate-100">
+                <div className="flex flex-col items-center gap-2 text-slate-500">
+                  <span className="text-3xl">🎥</span>
+                  <span className="text-sm font-bold tracking-tight">현장 영상 촬영 / 선택</span>
+                </div>
+                <input
+                  type="file"
+                  accept="video/*"
+                  capture="environment"
+                  onChange={(e) => setForm(p => ({ ...p, video: e.target.files?.[0] || null }))}
+                  className="hidden"
+                />
+              </label>
+            ) : (
+              <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-slate-900 p-2">
+                <video 
+                  src={URL.createObjectURL(form.video)} 
+                  className="aspect-video w-full rounded-xl object-cover"
+                  controls
+                />
+                <div className="mt-2 flex items-center justify-between px-2 pb-1">
+                  <p className="truncate text-xs font-medium text-slate-400">
+                    {form.video.name}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setForm(prev => ({ ...prev, video: null }))}
+                    className="text-xs font-black text-red-400 hover:text-red-300"
+                  >
+                    다시 촬영
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
         <button type="submit" disabled={status === "submitting"} className="mt-8 h-14 w-full rounded-xl bg-slate-800 text-white font-black text-lg">
