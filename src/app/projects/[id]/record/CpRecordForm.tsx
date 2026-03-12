@@ -263,14 +263,15 @@ export default function CpRecordForm({
                     </label>
                     <input
                       id={`mat-${m.id}`}
-                      type="number"
+                      type="text"
                       inputMode="numeric"
                       pattern="\d*"
-                      min={0}
-                      step={1}
                       autoComplete="off"
                       value={form.materialQuantities[m.id] ?? ""}
-                      onChange={(e) => handleMaterialChange(m.id, e.target.value)}
+                      onChange={(e) => {
+                        const val = e.target.value.replace(/[^0-9]/g, "");
+                        handleMaterialChange(m.id, val);
+                      }}
                       onFocus={(e) => e.target.select()}
                       className="min-h-[52px] w-28 rounded-xl border border-slate-300 px-4 py-3 text-base text-slate-900 shadow-sm focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-500"
                       placeholder="0"
@@ -294,14 +295,15 @@ export default function CpRecordForm({
               <input
                 id="material_quantity"
                 name="material_quantity"
-                type="number"
+                type="text"
                 inputMode="numeric"
                 pattern="\d*"
-                min={0}
-                step={1}
                 autoComplete="off"
                 value={form.material_quantity}
-                onChange={handleChange}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/[^0-9]/g, "");
+                  setForm(prev => ({ ...prev, material_quantity: val }));
+                }}
                 onFocus={(e) => e.target.select()}
                 className={inputClass}
                 placeholder={recordStage === "operating" ? "소모된 양 입력" : "예: 100"}
@@ -324,12 +326,17 @@ export default function CpRecordForm({
               <input
                 id="temperature"
                 name="temperature"
-                type="number"
+                type="text"
                 inputMode="decimal"
-                step="0.1"
                 autoComplete="off"
                 value={form.temperature}
-                onChange={handleChange}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/[^0-9.]/g, "");
+                  // 소수점은 하나만 허용
+                  const parts = val.split(".");
+                  const cleanVal = parts.length > 2 ? `${parts[0]}.${parts[1]}` : val;
+                  setForm(prev => ({ ...prev, temperature: cleanVal }));
+                }}
                 onFocus={(e) => e.target.select()}
                 className={inputClass}
                 placeholder="예: 25.5"
@@ -345,14 +352,16 @@ export default function CpRecordForm({
               <input
                 id="humidity"
                 name="humidity"
-                type="number"
+                type="text"
                 inputMode="decimal"
-                min="0"
-                max="100"
-                step="0.1"
                 autoComplete="off"
                 value={form.humidity}
-                onChange={handleChange}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/[^0-9.]/g, "");
+                  const parts = val.split(".");
+                  const cleanVal = parts.length > 2 ? `${parts[0]}.${parts[1]}` : val;
+                  setForm(prev => ({ ...prev, humidity: cleanVal }));
+                }}
                 onFocus={(e) => e.target.select()}
                 className={inputClass}
                 placeholder="예: 60"

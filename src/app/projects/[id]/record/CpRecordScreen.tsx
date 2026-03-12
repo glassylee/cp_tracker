@@ -734,17 +734,16 @@ function PreRaceStep({
                 <li key={m.id} className="flex flex-wrap items-center gap-2">
                   <label className="w-28 shrink-0 text-base text-slate-700">{m.name}</label>
                   <input
-                    type="number"
+                    type="text"
                     inputMode="numeric"
                     pattern="\d*"
-                    min={0}
-                    step={1}
                     autoComplete="off"
                     value={materialQuantities[m.id] ?? ""}
                     onFocus={(e) => e.target.select()}
-                    onChange={(e) =>
-                      setMaterialQuantities((prev) => ({ ...prev, [m.id]: e.target.value }))
-                    }
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/[^0-9]/g, "");
+                      setMaterialQuantities((prev) => ({ ...prev, [m.id]: val }));
+                    }}
                     className="min-h-[52px] w-28 rounded-xl border border-slate-300 px-4 py-3 text-base"
                   />
                   <span className="shrink-0 text-base text-slate-600">{m.unit ?? "개"}</span>
@@ -756,14 +755,16 @@ function PreRaceStep({
           <div>
             <label className="block text-base font-medium text-slate-700">최초 물자량</label>
             <input
-              type="number"
+              type="text"
               inputMode="numeric"
               pattern="\d*"
-              min={0}
               autoComplete="off"
               value={materialQuantity}
               onFocus={(e) => e.target.select()}
-              onChange={(e) => setMaterialQuantity(e.target.value)}
+              onChange={(e) => {
+                const val = e.target.value.replace(/[^0-9]/g, "");
+                setMaterialQuantity(val);
+              }}
               className={inputClass}
               placeholder="예: 100"
             />
@@ -886,13 +887,17 @@ function FirstRunnerStep({
           <div>
             <label className="block text-base font-medium text-slate-700">온도 (°C)</label>
             <input
-              type="number"
+              type="text"
               inputMode="decimal"
-              step={0.1}
               autoComplete="off"
               value={temperature}
               onFocus={(e) => e.target.select()}
-              onChange={(e) => setTemperature(e.target.value)}
+              onChange={(e) => {
+                const val = e.target.value.replace(/[^0-9.]/g, "");
+                const parts = val.split(".");
+                const cleanVal = parts.length > 2 ? `${parts[0]}.${parts[1]}` : val;
+                setTemperature(cleanVal);
+              }}
               className={inputClass}
               placeholder="예: 25.5"
             />
@@ -900,15 +905,17 @@ function FirstRunnerStep({
           <div>
             <label className="block text-base font-medium text-slate-700">습도 (%)</label>
             <input
-              type="number"
+              type="text"
               inputMode="decimal"
-              min={0}
-              max={100}
-              step={0.1}
               autoComplete="off"
               value={humidity}
               onFocus={(e) => e.target.select()}
-              onChange={(e) => setHumidity(e.target.value)}
+              onChange={(e) => {
+                const val = e.target.value.replace(/[^0-9.]/g, "");
+                const parts = val.split(".");
+                const cleanVal = parts.length > 2 ? `${parts[0]}.${parts[1]}` : val;
+                setHumidity(cleanVal);
+              }}
               className={inputClass}
               placeholder="예: 60"
             />
@@ -922,17 +929,16 @@ function FirstRunnerStep({
                 <li key={m.id} className="flex flex-wrap items-center gap-2">
                   <label className="w-28 shrink-0 text-base text-slate-700">{m.name}</label>
                   <input
-                    type="number"
+                    type="text"
                     inputMode="numeric"
                     pattern="\d*"
-                    min={0}
-                    step={1}
                     autoComplete="off"
                     value={materialQuantities[m.id] ?? ""}
                     onFocus={(e) => e.target.select()}
-                    onChange={(e) =>
-                      setMaterialQuantities((prev) => ({ ...prev, [m.id]: e.target.value }))
-                    }
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/[^0-9]/g, "");
+                      setMaterialQuantities((prev) => ({ ...prev, [m.id]: val }));
+                    }}
                     className="min-h-[52px] w-28 rounded-xl border border-slate-300 px-4 py-3 text-base"
                   />
                   <span className="shrink-0 text-base text-slate-600">{m.unit ?? "개"}</span>
@@ -944,11 +950,16 @@ function FirstRunnerStep({
           <div>
             <label className="block text-base font-medium text-slate-700">물자량</label>
             <input
-              type="number"
+              type="text"
               inputMode="numeric"
-              min={0}
+              pattern="\d*"
+              autoComplete="off"
               value={materialQuantity}
-              onChange={(e) => setMaterialQuantity(e.target.value)}
+              onFocus={(e) => e.target.select()}
+              onChange={(e) => {
+                const val = e.target.value.replace(/[^0-9]/g, "");
+                setMaterialQuantity(val);
+              }}
               className={inputClass}
               placeholder="예: 100"
             />
@@ -1220,17 +1231,16 @@ function FinishBlock({
                 <li key={m.id} className="flex flex-wrap items-center gap-2">
                   <label className="w-28 shrink-0 text-base text-slate-700">{m.name}</label>
                   <input
-                    type="number"
+                    type="text"
                     inputMode="numeric"
                     pattern="\d*"
-                    min={0}
-                    step={1}
                     autoComplete="off"
                     value={finalQuantities[m.id] ?? ""}
                     onFocus={(e) => e.target.select()}
-                    onChange={(e) =>
-                      setFinalQuantities((prev) => ({ ...prev, [m.id]: e.target.value }))
-                    }
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/[^0-9]/g, "");
+                      setFinalQuantities((prev) => ({ ...prev, [m.id]: val }));
+                    }}
                     className="min-h-[52px] w-28 rounded-xl border border-slate-300 px-4 py-3 text-base"
                     placeholder="0"
                   />
