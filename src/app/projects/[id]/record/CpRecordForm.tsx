@@ -3,8 +3,6 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-type Material = { id: string; name: string; sort_order: number; unit?: string };
-
 type FormState = {
   material_quantity: string;
   materialQuantities: Record<string, string>;
@@ -34,15 +32,7 @@ const initialFormState = (
   video: null,
 });
 
-export type EditInitialData = {
-  temperature?: number | null;
-  humidity?: number | null;
-  notes?: string | null;
-  material_quantity?: number | null;
-  materialQuantities?: Record<string, number>;
-};
-
-export default function CpRecordForm({ projectId, checkpointId, checkpointName, materials, onRecordSaved, onEditComplete, editRecordId, initialData, recordStage, isEmergency }: any) {
+export default function CpRecordForm({ projectId, checkpointId, materials, onRecordSaved, onEditComplete, editRecordId, initialData, recordStage, isEmergency }: any) {
   const router = useRouter();
   const materialIds = materials.map((m: any) => m.id);
   const [form, setForm] = useState<FormState>(() => initialFormState(materialIds, initialData ?? undefined));
@@ -54,13 +44,15 @@ export default function CpRecordForm({ projectId, checkpointId, checkpointName, 
     if (initialData) setForm(initialFormState(materialIds, initialData));
   }, [initialData, materialIds.join(",")]);
 
-  const fixedInputStyle: React.CSSProperties = {
+  // ⚠️ 시스템 테마를 무시하고 무조건 검정 글자/흰 배경을 보여주기 위한 인라인 스타일
+  const forceLightStyle: React.CSSProperties = {
+    color: 'black',
+    backgroundColor: 'white',
+    WebkitTextFillColor: 'black',
     opacity: 1,
-    fontSize: "16px",
+    WebkitAppearance: 'none',
+    appearance: 'none',
   };
-
-  const inputClass = "h-12 w-24 border-2 border-slate-300 rounded-xl px-4 text-center font-bold !text-black !bg-white";
-  const fullInputClass = "h-14 w-full border-2 border-slate-300 rounded-xl px-4 font-bold !text-black !bg-white";
 
   const doSubmit = async () => {
     setStatus("submitting");
@@ -119,14 +111,15 @@ export default function CpRecordForm({ projectId, checkpointId, checkpointName, 
               {materials.map((m: any) => (
                 <div key={m.id} className="flex items-center gap-3">
                   <label className="flex-1 text-black font-medium">{m.name}</label>
-                    <input
-                      type="text"
-                      inputMode="numeric"
-                      value={form.materialQuantities[m.id] || ""}
-                      onChange={(e) => setForm(p => ({ ...p, materialQuantities: { ...p.materialQuantities, [m.id]: e.target.value } }))}
-                      className="h-12 w-24 border-2 border-slate-300 rounded-xl px-4 text-center font-bold !text-black !bg-white"
-                      placeholder="0"
-                    />
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    value={form.materialQuantities[m.id] || ""}
+                    onChange={(e) => setForm(p => ({ ...p, materialQuantities: { ...p.materialQuantities, [m.id]: e.target.value } }))}
+                    style={forceLightStyle}
+                    className="h-12 w-24 border-2 border-slate-300 rounded-xl px-4 text-center font-bold !text-black !bg-white"
+                    placeholder="0"
+                  />
                   <span className="text-slate-500 w-6">{m.unit ?? "개"}</span>
                 </div>
               ))}
@@ -139,6 +132,7 @@ export default function CpRecordForm({ projectId, checkpointId, checkpointName, 
                 inputMode="numeric"
                 value={form.material_quantity}
                 onChange={(e) => setForm(p => ({ ...p, material_quantity: e.target.value }))}
+                style={forceLightStyle}
                 className="h-14 w-full border-2 border-slate-300 rounded-xl px-4 font-bold !text-black !bg-white"
                 placeholder="숫자 입력"
               />
@@ -153,6 +147,7 @@ export default function CpRecordForm({ projectId, checkpointId, checkpointName, 
                 inputMode="decimal"
                 value={form.temperature}
                 onChange={(e) => setForm(p => ({ ...p, temperature: e.target.value }))}
+                style={forceLightStyle}
                 className="h-12 w-full border-2 border-slate-300 rounded-xl px-4 font-bold !text-black !bg-white"
                 placeholder="25.5"
               />
@@ -164,6 +159,7 @@ export default function CpRecordForm({ projectId, checkpointId, checkpointName, 
                 inputMode="decimal"
                 value={form.humidity}
                 onChange={(e) => setForm(p => ({ ...p, humidity: e.target.value }))}
+                style={forceLightStyle}
                 className="h-12 w-full border-2 border-slate-300 rounded-xl px-4 font-bold !text-black !bg-white"
                 placeholder="60"
               />
@@ -175,6 +171,7 @@ export default function CpRecordForm({ projectId, checkpointId, checkpointName, 
             <textarea
               value={form.notes}
               onChange={(e) => setForm(p => ({ ...p, notes: e.target.value }))}
+              style={forceLightStyle}
               className="w-full border-2 border-slate-300 rounded-xl p-4 font-medium !text-black !bg-white"
               rows={3}
               placeholder="내용 입력..."
@@ -183,14 +180,14 @@ export default function CpRecordForm({ projectId, checkpointId, checkpointName, 
         </div>
 
         <button type="submit" disabled={status === "submitting"} className="mt-8 h-14 w-full rounded-xl bg-slate-800 text-white font-black text-lg">
-          {status === "submitting" ? "처리 중..." : "기록 저장하기"}
+          {status === "submitting" ? "저장 중..." : "기록 저장하기"}
         </button>
         {message && <div className={`mt-4 p-4 rounded-xl text-center font-bold ${status === 'error' ? 'bg-red-50 text-red-800' : 'bg-green-50 text-green-800'}`}>{message}</div>}
       </form>
 
       {showConfirm && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-sm rounded-3xl bg-white p-8 shadow-2xl">
+          <div className="w-full max-sm:w-full max-w-sm rounded-3xl bg-white p-8 shadow-2xl">
             <p className="text-center text-xl font-black text-black">기록을 제출할까요?</p>
             <div className="mt-8 flex gap-3">
               <button onClick={() => setShowConfirm(false)} className="flex-1 h-14 rounded-2xl border-2 border-slate-200 text-slate-600 font-bold">취소</button>

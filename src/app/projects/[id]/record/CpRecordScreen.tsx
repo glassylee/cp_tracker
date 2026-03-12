@@ -19,12 +19,14 @@ export default function CpRecordScreen({ projectId, checkpointId, materials, ses
   const [showClosingForm, setShowClosingForm] = useState(false);
   const [localRecentRecords, setLocalRecentRecords] = useState(recentRecords);
 
-  const fixedInputStyle: React.CSSProperties = {
-    color: "#000000",
-    backgroundColor: "#ffffff",
-    WebkitTextFillColor: "#000000",
+  const forceLightStyle: React.CSSProperties = {
+    color: 'black',
+    backgroundColor: 'white',
+    WebkitTextFillColor: 'black',
     opacity: 1,
-    fontSize: "16px",
+    WebkitAppearance: 'none',
+    appearance: 'none',
+    fontSize: '16px',
   };
 
   const refreshData = async () => {
@@ -67,8 +69,8 @@ export default function CpRecordScreen({ projectId, checkpointId, materials, ses
         ))}
       </nav>
 
-      {stage === "ready" && <PreRaceStep checkpointId={checkpointId} materials={materials} onSuccess={() => updateStage("first_arrival")} refresh={refreshData} inputStyle={fixedInputStyle} />}
-      {stage === "first_arrival" && <FirstRunnerStep checkpointId={checkpointId} materials={materials} onSuccess={() => updateStage("recording")} refresh={refreshData} inputStyle={fixedInputStyle} />}
+      {stage === "ready" && <PreRaceStep checkpointId={checkpointId} materials={materials} onSuccess={() => updateStage("first_arrival")} refresh={refreshData} forceLightStyle={forceLightStyle} />}
+      {stage === "first_arrival" && <FirstRunnerStep checkpointId={checkpointId} materials={materials} onSuccess={() => updateStage("recording")} refresh={refreshData} forceLightStyle={forceLightStyle} />}
       
       {stage === "recording" && !showClosingForm && (
         <div className="space-y-6">
@@ -80,7 +82,7 @@ export default function CpRecordScreen({ projectId, checkpointId, materials, ses
       {stage === "recording" && showClosingForm && (
         <div className="space-y-6">
           <button onClick={() => setShowClosingForm(false)} className="text-sm font-bold text-slate-500 underline px-2">← 실시간 운영 화면으로 돌아가기</button>
-          <FinishBlock checkpointId={checkpointId} materials={materials} onSuccess={() => updateStage("closed")} refresh={refreshData} inputStyle={fixedInputStyle} />
+          <FinishBlock checkpointId={checkpointId} materials={materials} onSuccess={() => updateStage("closed")} refresh={refreshData} forceLightStyle={forceLightStyle} />
         </div>
       )}
 
@@ -89,7 +91,7 @@ export default function CpRecordScreen({ projectId, checkpointId, materials, ses
   );
 }
 
-function PreRaceStep({ checkpointId, materials, onSuccess, refresh, inputStyle }: any) {
+function PreRaceStep({ checkpointId, materials, onSuccess, refresh, forceLightStyle }: any) {
   const [qty, setQty] = useState<Record<string, string>>(() => Object.fromEntries(materials.map((m: any) => [m.id, ""])));
   const [loading, setLoading] = useState(false);
 
@@ -112,7 +114,15 @@ function PreRaceStep({ checkpointId, materials, onSuccess, refresh, inputStyle }
         {materials.map((m: any) => (
           <div key={m.id} className="flex items-center gap-4">
             <label className="flex-1 text-black font-bold">{m.name}</label>
-            <input type="text" inputMode="numeric" value={qty[m.id] || ""} onChange={e => setQty(p => ({ ...p, [m.id]: e.target.value }))} className="h-14 w-28 border-2 border-slate-300 rounded-2xl px-4 text-center font-black text-lg !text-black !bg-white" placeholder="0" />
+            <input 
+              type="text" 
+              inputMode="numeric" 
+              value={qty[m.id] || ""} 
+              onChange={e => setQty(p => ({ ...p, [m.id]: e.target.value }))} 
+              style={forceLightStyle}
+              className="h-14 w-28 border-2 border-slate-300 rounded-2xl px-4 text-center font-black text-lg !text-black !bg-white" 
+              placeholder="0" 
+            />
             <span className="text-slate-400 font-bold w-6">{m.unit || "개"}</span>
           </div>
         ))}
@@ -122,7 +132,7 @@ function PreRaceStep({ checkpointId, materials, onSuccess, refresh, inputStyle }
   );
 }
 
-function FirstRunnerStep({ checkpointId, materials, onSuccess, refresh, inputStyle }: any) {
+function FirstRunnerStep({ checkpointId, materials, onSuccess, refresh, forceLightStyle }: any) {
   const [qty, setQty] = useState<Record<string, string>>(() => Object.fromEntries(materials.map((m: any) => [m.id, ""])));
   const [temp, setTemp] = useState("");
   const [loading, setLoading] = useState(false);
@@ -145,14 +155,30 @@ function FirstRunnerStep({ checkpointId, materials, onSuccess, refresh, inputSty
       <div className="space-y-6">
         <div>
           <label className="block text-sm font-black text-slate-700 mb-2">현재 온도 (°C)</label>
-          <input type="text" inputMode="decimal" value={temp} onChange={e => setTemp(e.target.value)} className="h-14 w-full border-2 border-slate-300 rounded-2xl px-6 font-black text-xl !text-black !bg-white" placeholder="예: 25.5" />
+          <input 
+            type="text" 
+            inputMode="decimal" 
+            value={temp} 
+            onChange={e => setTemp(e.target.value)} 
+            style={forceLightStyle}
+            className="h-14 w-full border-2 border-slate-300 rounded-2xl px-6 font-black text-xl !text-black !bg-white" 
+            placeholder="예: 25.5" 
+          />
         </div>
         <div className="pt-4 border-t border-slate-100 space-y-5">
           <label className="block text-sm font-black text-slate-700">현재 물자 잔량</label>
           {materials.map((m: any) => (
             <div key={m.id} className="flex items-center gap-4">
               <label className="flex-1 text-black font-bold">{m.name}</label>
-              <input type="text" inputMode="numeric" value={qty[m.id] || ""} onChange={e => setQty(p => ({ ...p, [m.id]: e.target.value }))} className="h-14 w-28 border-2 border-slate-300 rounded-2xl px-4 text-center font-black text-lg !text-black !bg-white" placeholder="0" />
+              <input 
+                type="text" 
+                inputMode="numeric" 
+                value={qty[m.id] || ""} 
+                onChange={e => setQty(p => ({ ...p, [m.id]: e.target.value }))} 
+                style={forceLightStyle}
+                className="h-14 w-28 border-2 border-slate-300 rounded-2xl px-4 text-center font-black text-lg !text-black !bg-white" 
+                placeholder="0" 
+              />
             </div>
           ))}
         </div>
@@ -162,7 +188,7 @@ function FirstRunnerStep({ checkpointId, materials, onSuccess, refresh, inputSty
   );
 }
 
-function FinishBlock({ checkpointId, materials, onSuccess, refresh, inputStyle }: any) {
+function FinishBlock({ checkpointId, materials, onSuccess, refresh, forceLightStyle }: any) {
   const [qty, setQty] = useState<Record<string, string>>(() => Object.fromEntries(materials.map((m: any) => [m.id, ""])));
   const [loading, setLoading] = useState(false);
 
@@ -185,7 +211,15 @@ function FinishBlock({ checkpointId, materials, onSuccess, refresh, inputStyle }
         {materials.map((m: any) => (
           <div key={m.id} className="flex items-center gap-4">
             <label className="flex-1 text-black font-bold">{m.name}</label>
-            <input type="text" inputMode="numeric" value={qty[m.id] || ""} onChange={e => setQty(p => ({ ...p, [m.id]: e.target.value }))} className="h-14 w-28 border-2 border-slate-300 rounded-2xl px-4 text-center font-black text-lg !text-black !bg-white" placeholder="0" />
+            <input 
+              type="text" 
+              inputMode="numeric" 
+              value={qty[m.id] || ""} 
+              onChange={e => setQty(p => ({ ...p, [m.id]: e.target.value }))} 
+              style={forceLightStyle}
+              className="h-14 w-28 border-2 border-slate-300 rounded-2xl px-4 text-center font-black text-lg !text-black !bg-white" 
+              placeholder="0" 
+            />
           </div>
         ))}
       </div>
