@@ -55,15 +55,12 @@ export default function CpRecordForm({ projectId, checkpointId, checkpointName, 
   }, [initialData, materialIds.join(",")]);
 
   const fixedInputStyle: React.CSSProperties = {
-    color: "#000000",
-    backgroundColor: "#ffffff",
-    WebkitTextFillColor: "#000000",
     opacity: 1,
     fontSize: "16px",
   };
 
-  const inputClass = "h-12 w-24 border-2 border-slate-300 rounded-xl px-4 text-center font-bold text-black bg-white !text-black !bg-white";
-  const fullInputClass = "h-14 w-full border-2 border-slate-300 rounded-xl px-4 font-bold text-black bg-white !text-black !bg-white";
+  const inputClass = "h-12 w-24 border-2 border-slate-300 rounded-xl px-4 text-center font-bold !text-black !bg-white";
+  const fullInputClass = "h-14 w-full border-2 border-slate-300 rounded-xl px-4 font-bold !text-black !bg-white";
 
   const doSubmit = async () => {
     setStatus("submitting");
@@ -127,8 +124,7 @@ export default function CpRecordForm({ projectId, checkpointId, checkpointName, 
                       inputMode="numeric"
                       value={form.materialQuantities[m.id] || ""}
                       onChange={(e) => setForm(p => ({ ...p, materialQuantities: { ...p.materialQuantities, [m.id]: e.target.value } }))}
-                      style={fixedInputStyle}
-                      className="h-12 w-24 border-2 border-slate-300 rounded-xl px-4 text-center font-bold text-black bg-white !text-black !bg-white"
+                      className="h-12 w-24 border-2 border-slate-300 rounded-xl px-4 text-center font-bold !text-black !bg-white"
                       placeholder="0"
                     />
                   <span className="text-slate-500 w-6">{m.unit ?? "개"}</span>
@@ -143,8 +139,7 @@ export default function CpRecordForm({ projectId, checkpointId, checkpointName, 
                 inputMode="numeric"
                 value={form.material_quantity}
                 onChange={(e) => setForm(p => ({ ...p, material_quantity: e.target.value }))}
-                style={fixedInputStyle}
-                className="h-14 w-full border-2 border-slate-300 rounded-xl px-4 font-bold text-black bg-white !text-black !bg-white"
+                className="h-14 w-full border-2 border-slate-300 rounded-xl px-4 font-bold !text-black !bg-white"
                 placeholder="숫자 입력"
               />
             </div>
@@ -158,8 +153,7 @@ export default function CpRecordForm({ projectId, checkpointId, checkpointName, 
                 inputMode="decimal"
                 value={form.temperature}
                 onChange={(e) => setForm(p => ({ ...p, temperature: e.target.value }))}
-                style={fixedInputStyle}
-                className="h-12 w-full border-2 border-slate-300 rounded-xl px-4 font-bold text-black bg-white !text-black !bg-white"
+                className="h-12 w-full border-2 border-slate-300 rounded-xl px-4 font-bold !text-black !bg-white"
                 placeholder="25.5"
               />
             </div>
@@ -170,8 +164,7 @@ export default function CpRecordForm({ projectId, checkpointId, checkpointName, 
                 inputMode="decimal"
                 value={form.humidity}
                 onChange={(e) => setForm(p => ({ ...p, humidity: e.target.value }))}
-                style={fixedInputStyle}
-                className="h-12 w-full border-2 border-slate-300 rounded-xl px-4 font-bold text-black bg-white !text-black !bg-white"
+                className="h-12 w-full border-2 border-slate-300 rounded-xl px-4 font-bold !text-black !bg-white"
                 placeholder="60"
               />
             </div>
@@ -182,8 +175,7 @@ export default function CpRecordForm({ projectId, checkpointId, checkpointName, 
             <textarea
               value={form.notes}
               onChange={(e) => setForm(p => ({ ...p, notes: e.target.value }))}
-              style={fixedInputStyle}
-              className="w-full border-2 border-slate-300 rounded-xl p-4 font-medium text-black bg-white !text-black !bg-white"
+              className="w-full border-2 border-slate-300 rounded-xl p-4 font-medium !text-black !bg-white"
               rows={3}
               placeholder="내용 입력..."
             />

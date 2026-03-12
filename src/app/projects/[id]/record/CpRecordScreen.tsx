@@ -112,7 +112,7 @@ function PreRaceStep({ checkpointId, materials, onSuccess, refresh, inputStyle }
         {materials.map((m: any) => (
           <div key={m.id} className="flex items-center gap-4">
             <label className="flex-1 text-black font-bold">{m.name}</label>
-            <input type="text" inputMode="numeric" value={qty[m.id] || ""} onChange={e => setQty(p => ({ ...p, [m.id]: e.target.value }))} style={inputStyle} className="h-14 w-28 border-2 border-slate-300 rounded-2xl px-4 text-center font-black text-lg text-black bg-white !text-black !bg-white" placeholder="0" />
+            <input type="text" inputMode="numeric" value={qty[m.id] || ""} onChange={e => setQty(p => ({ ...p, [m.id]: e.target.value }))} className="h-14 w-28 border-2 border-slate-300 rounded-2xl px-4 text-center font-black text-lg !text-black !bg-white" placeholder="0" />
             <span className="text-slate-400 font-bold w-6">{m.unit || "개"}</span>
           </div>
         ))}
@@ -145,14 +145,14 @@ function FirstRunnerStep({ checkpointId, materials, onSuccess, refresh, inputSty
       <div className="space-y-6">
         <div>
           <label className="block text-sm font-black text-slate-700 mb-2">현재 온도 (°C)</label>
-          <input type="text" inputMode="decimal" value={temp} onChange={e => setTemp(e.target.value)} style={inputStyle} className="h-14 w-full border-2 border-slate-300 rounded-2xl px-6 font-black text-xl text-black bg-white !text-black !bg-white" placeholder="예: 25.5" />
+          <input type="text" inputMode="decimal" value={temp} onChange={e => setTemp(e.target.value)} className="h-14 w-full border-2 border-slate-300 rounded-2xl px-6 font-black text-xl !text-black !bg-white" placeholder="예: 25.5" />
         </div>
         <div className="pt-4 border-t border-slate-100 space-y-5">
           <label className="block text-sm font-black text-slate-700">현재 물자 잔량</label>
           {materials.map((m: any) => (
             <div key={m.id} className="flex items-center gap-4">
               <label className="flex-1 text-black font-bold">{m.name}</label>
-              <input type="text" inputMode="numeric" value={qty[m.id] || ""} onChange={e => setQty(p => ({ ...p, [m.id]: e.target.value }))} style={inputStyle} className="h-14 w-28 border-2 border-slate-300 rounded-2xl px-4 text-center font-black text-lg text-black bg-white !text-black !bg-white" placeholder="0" />
+              <input type="text" inputMode="numeric" value={qty[m.id] || ""} onChange={e => setQty(p => ({ ...p, [m.id]: e.target.value }))} className="h-14 w-28 border-2 border-slate-300 rounded-2xl px-4 text-center font-black text-lg !text-black !bg-white" placeholder="0" />
             </div>
           ))}
         </div>
@@ -185,7 +185,7 @@ function FinishBlock({ checkpointId, materials, onSuccess, refresh, inputStyle }
         {materials.map((m: any) => (
           <div key={m.id} className="flex items-center gap-4">
             <label className="flex-1 text-black font-bold">{m.name}</label>
-            <input type="text" inputMode="numeric" value={qty[m.id] || ""} onChange={e => setQty(p => ({ ...p, [m.id]: e.target.value }))} style={inputStyle} className="h-14 w-28 border-2 border-slate-300 rounded-2xl px-4 text-center font-black text-lg text-black bg-white !text-black !bg-white" placeholder="0" />
+            <input type="text" inputMode="numeric" value={qty[m.id] || ""} onChange={e => setQty(p => ({ ...p, [m.id]: e.target.value }))} className="h-14 w-28 border-2 border-slate-300 rounded-2xl px-4 text-center font-black text-lg !text-black !bg-white" placeholder="0" />
           </div>
         ))}
       </div>

@@ -3,9 +3,9 @@
 @tailwind utilities;
 
 :root {
-  --brand-primary: #DFFF00; /* 네온 라임 */
-  --brand-secondary: #FF5F1F; /* 네온 오렌지 */
-  --bg-dark: #0F172A; /* 딥 네이비 */
+  --brand-primary: #DFFF00;
+  --brand-secondary: #FF5F1F;
+  --bg-dark: #0F172A;
   --bg-card: #1E293B;
   --text-main: #F8FAFC;
 }
@@ -16,53 +16,36 @@
   }
 }
 
-/* 기록 앱 화면 전용 스타일 (다크 테마 강제) */
-.record-app-shell {
-  @apply bg-[#0F172A] text-white;
-  padding-top: env(safe-area-inset-top, 0);
-  padding-bottom: env(safe-area-inset-bottom, 0);
-  padding-left: env(safe-area-inset-left, 0);
-  padding-right: env(safe-area-inset-right, 0);
-}
-
-.safe-area-both {
-  padding-top: env(safe-area-inset-top, 0);
-  padding-bottom: env(safe-area-inset-bottom, 0);
-  padding-left: env(safe-area-inset-left, 0);
-  padding-right: env(safe-area-inset-right, 0);
-}
-
-/* 세련된 버튼 효과 */
-.btn-active {
-  @apply active:scale-95 transition-transform duration-100;
-}
-
-/* ⚠️ 긴급: 입력창 글자 안 보임 해결 (가장 높은 우선순위) */
-input[type="text"], 
-input[type="number"], 
-input[type="email"], 
-input[type="tel"], 
-textarea {
+/* 🚨 긴급: 모든 입력창 글자색 강제 고정 (최종 병기) */
+input, 
+textarea, 
+select {
   color: #000000 !important;
   background-color: #ffffff !important;
   -webkit-text-fill-color: #000000 !important;
   -webkit-appearance: none !important;
+  appearance: none !important;
   opacity: 1 !important;
   color-scheme: light !important;
 }
 
 input::placeholder, 
 textarea::placeholder {
-  color: #94a3b8 !important; /* slate-400 */
+  color: #94a3b8 !important;
   -webkit-text-fill-color: #94a3b8 !important;
   opacity: 1 !important;
 }
 
-/* 글래스모피즘 효과 */
+.record-app-shell {
+  @apply bg-[#0F172A] text-white;
+  padding-top: env(safe-area-inset-top, 0);
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+.btn-active {
+  @apply active:scale-95 transition-transform duration-100;
+}
+
 .glass {
   @apply bg-white/80 backdrop-blur-md border border-white/20;
 }
-.glass-dark {
-  @apply bg-slate-800/80 backdrop-blur-md border border-slate-700/50;
-}
-
