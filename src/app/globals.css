@@ -23,6 +23,7 @@ textarea,
 select {
   color: #000000 !important;
   background-color: #ffffff !important;
+  caret-color: #000000 !important; /* 커서 색상 강제 */
   -webkit-text-fill-color: #000000 !important;
   -webkit-appearance: none !important;
   appearance: none !important;

@@ -25,6 +25,7 @@ export default function CpRecordScreen({ projectId, checkpointId, materials, ses
     color: 'black',
     backgroundColor: 'white',
     WebkitTextFillColor: 'black',
+    caretColor: 'black', // 커서 색상 강제
     opacity: 1,
     WebkitAppearance: 'none',
     appearance: 'none',

@@ -49,6 +49,7 @@ export default function CpRecordForm({ projectId, checkpointId, materials, onRec
     color: 'black',
     backgroundColor: 'white',
     WebkitTextFillColor: 'black',
+    caretColor: 'black', // 커서 색상 추가
     opacity: 1,
     WebkitAppearance: 'none',
     appearance: 'none',
