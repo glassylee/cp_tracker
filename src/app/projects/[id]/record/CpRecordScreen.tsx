@@ -318,21 +318,28 @@ function FirstRunnerStep({ checkpointId, materials, onSuccess, refresh, forceLig
 
 function EmergencyEventBlock({ checkpointId, onClose, onSaved, forceLightStyle }: any) {
   const [type, setType] = useState("부상");
+  const [bibNumber, setBibNumber] = useState("");
   const [notes, setNotes] = useState("");
   const [video, setVideo] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
+
+  const showBibInput = type === "부상" || type === "컴플레인";
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     setLoading(true);
     try {
       const videoUrl = video ? await uploadVideo(video, checkpointId) : null;
+      const finalNotes = showBibInput && bibNumber 
+        ? `[배번: ${bibNumber}] [${type}] ${notes}` 
+        : `[${type}] ${notes}`;
+
       await fetch("/api/cp-records", { 
         method: "POST", 
         headers: { "Content-Type": "application/json" }, 
         body: JSON.stringify({ 
           checkpoint_id: checkpointId, 
-          notes: `[${type}] ${notes}`, 
+          notes: finalNotes, 
           is_emergency: true,
           video_url: videoUrl
         }) 
@@ -347,20 +354,45 @@ function EmergencyEventBlock({ checkpointId, onClose, onSaved, forceLightStyle }
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
       <form onSubmit={handleSubmit} className="w-full max-w-sm rounded-3xl bg-white p-8 shadow-2xl space-y-6">
         <h3 className="text-xl font-black text-black">긴급/특이사항 기록</h3>
-        <select value={type} onChange={e => setType(e.target.value)} style={forceLightStyle} className="w-full h-14 border-2 border-slate-300 rounded-2xl px-4 font-bold !text-black !bg-white">
-          <option value="부상">🩹 부상 발생</option>
-          <option value="병목">🛑 병목 현상</option>
-          <option value="컴플레인">🗣️ 컴플레인</option>
-          <option value="기타">📝 기타 사항</option>
-        </select>
-        <textarea 
-          value={notes} 
-          onChange={e => setNotes(e.target.value)} 
-          style={forceLightStyle} 
-          className="w-full border-2 border-slate-300 rounded-2xl p-4 font-bold !text-black !bg-white" 
-          rows={3} 
-          placeholder="상세 내용을 입력하세요."
-        />
+        
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-bold text-slate-700 mb-2">유형 선택</label>
+            <select value={type} onChange={e => setType(e.target.value)} style={forceLightStyle} className="w-full h-14 border-2 border-slate-300 rounded-2xl px-4 font-bold !text-black !bg-white">
+              <option value="부상">🩹 부상 발생</option>
+              <option value="병목">🛑 병목 현상</option>
+              <option value="컴플레인">🗣️ 컴플레인</option>
+              <option value="기타">📝 기타 사항</option>
+            </select>
+          </div>
+
+          {showBibInput && (
+            <div className="animate-in fade-in slide-in-from-top-2 duration-200">
+              <label className="block text-sm font-bold text-slate-700 mb-2">선수 배번 (BIB)</label>
+              <input 
+                type="text" 
+                inputMode="numeric"
+                value={bibNumber} 
+                onChange={e => setBibNumber(e.target.value)} 
+                style={forceLightStyle}
+                className="w-full h-14 border-2 border-slate-300 rounded-2xl px-4 font-bold !text-black !bg-white" 
+                placeholder="배번 입력 (예: 1234)"
+              />
+            </div>
+          )}
+
+          <div>
+            <label className="block text-sm font-bold text-slate-700 mb-2">상세 내용</label>
+            <textarea 
+              value={notes} 
+              onChange={e => setNotes(e.target.value)} 
+              style={forceLightStyle} 
+              className="w-full border-2 border-slate-300 rounded-2xl p-4 font-bold !text-black !bg-white" 
+              rows={3} 
+              placeholder="상세 내용을 입력하세요."
+            />
+          </div>
+        </div>
 
         <div>
           <label className="block text-sm font-bold text-slate-700 mb-2">현장 상황 영상 (선택)</label>
