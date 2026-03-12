@@ -42,6 +42,32 @@ export default function CpRecordScreen({ projectId, checkpointId, materials, ses
     fontSize: '16px',
   };
 
+  const [countdownSeconds, setCountdownSeconds] = useState<number | null>(null);
+
+  // 마지막 기록 시각을 기준으로 타이머 계산
+  useEffect(() => {
+    if (stage !== "recording") {
+      setCountdownSeconds(null);
+      return;
+    }
+
+    const lastRecord = localRecentRecords[0];
+    if (!lastRecord) {
+      setCountdownSeconds(null);
+      return;
+    }
+
+    const tick = () => {
+      const nextAt = new Date(lastRecord.recorded_at).getTime() + 10 * 60 * 1000;
+      const remaining = Math.max(0, Math.floor((nextAt - Date.now()) / 1000));
+      setCountdownSeconds(remaining);
+    };
+
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, [stage, localRecentRecords]);
+
   const refreshData = async () => {
     try {
       const res = await fetch(`/api/checkpoints/${checkpointId}/recent-records?_t=${Date.now()}`);
@@ -98,6 +124,22 @@ export default function CpRecordScreen({ projectId, checkpointId, materials, ses
       
       {stage === "recording" && !showClosingForm && (
         <div className="space-y-6">
+          {/* 타이머 표시 */}
+          <div className="rounded-2xl border-2 border-slate-200 bg-white p-6 text-center shadow-sm">
+            {countdownSeconds === null ? (
+              <p className="text-sm font-bold text-slate-500">기록을 시작하면 10분 타이머가 작동합니다.</p>
+            ) : countdownSeconds === 0 ? (
+              <p className="text-xl font-black text-red-600 animate-pulse">📢 지금 바로 기록하세요!</p>
+            ) : (
+              <>
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">다음 기록까지 남은 시간</p>
+                <p className="text-4xl font-mono font-black text-black">
+                  {Math.floor(countdownSeconds / 60)}:{(countdownSeconds % 60).toString().padStart(2, '0')}
+                </p>
+              </>
+            )}
+          </div>
+
           <CpRecordForm projectId={projectId} checkpointId={checkpointId} materials={materials} onRecordSaved={refreshData} recordStage="operating" />
           <button onClick={() => setShowEmergencyModal(true)} className="h-14 w-full rounded-2xl border-2 border-red-500 bg-red-50 text-red-700 font-bold shadow-sm">🚨 긴급/특이사항 기록</button>
           <button onClick={() => setShowClosingForm(true)} className="h-14 w-full rounded-2xl border-2 border-slate-300 bg-white text-slate-600 font-bold hover:bg-slate-50 shadow-sm">운영 종료 절차 시작하기</button>
