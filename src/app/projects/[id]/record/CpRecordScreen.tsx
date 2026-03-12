@@ -20,7 +20,7 @@ export default function CpRecordScreen({ projectId, checkpointId, materials, ses
   const [showEmergencyModal, setShowEmergencyModal] = useState(false);
   const [localRecentRecords, setLocalRecentRecords] = useState(recentRecords);
 
-  // ⚠️ 전역적으로 사용할 강제 라이트 모드 스타일
+  // ⚠️ 운영 화면(CpRecordForm)에서 잘 보였던 그 스타일 그대로 사용
   const forceLightStyle: React.CSSProperties = {
     color: 'black',
     backgroundColor: 'white',
@@ -74,22 +74,22 @@ export default function CpRecordScreen({ projectId, checkpointId, materials, ses
       {stage === "ready" && (
         <>
           <PreRaceStep checkpointId={checkpointId} materials={materials} onSuccess={() => updateStage("first_arrival")} refresh={refreshData} forceLightStyle={forceLightStyle} />
-          <button onClick={() => setShowEmergencyModal(true)} className="h-14 w-full rounded-2xl border-2 border-red-500 bg-red-50 text-red-700 font-bold">🚨 긴급/특이사항 기록</button>
+          <button onClick={() => setShowEmergencyModal(true)} className="h-14 w-full rounded-2xl border-2 border-red-500 bg-red-50 text-red-700 font-bold shadow-sm">🚨 긴급/특이사항 기록</button>
         </>
       )}
 
       {stage === "first_arrival" && (
         <>
           <FirstRunnerStep checkpointId={checkpointId} materials={materials} onSuccess={() => updateStage("recording")} refresh={refreshData} forceLightStyle={forceLightStyle} />
-          <button onClick={() => setShowEmergencyModal(true)} className="h-14 w-full rounded-2xl border-2 border-red-500 bg-red-50 text-red-700 font-bold">🚨 긴급/특이사항 기록</button>
+          <button onClick={() => setShowEmergencyModal(true)} className="h-14 w-full rounded-2xl border-2 border-red-500 bg-red-50 text-red-700 font-bold shadow-sm">🚨 긴급/특이사항 기록</button>
         </>
       )}
       
       {stage === "recording" && !showClosingForm && (
         <div className="space-y-6">
           <CpRecordForm projectId={projectId} checkpointId={checkpointId} materials={materials} onRecordSaved={refreshData} recordStage="operating" />
-          <button onClick={() => setShowEmergencyModal(true)} className="h-14 w-full rounded-2xl border-2 border-red-500 bg-red-50 text-red-700 font-bold">🚨 긴급/특이사항 기록</button>
-          <button onClick={() => setShowClosingForm(true)} className="h-14 w-full rounded-2xl border-2 border-slate-300 bg-white text-slate-600 font-bold hover:bg-slate-50">운영 종료 절차 시작하기</button>
+          <button onClick={() => setShowEmergencyModal(true)} className="h-14 w-full rounded-2xl border-2 border-red-500 bg-red-50 text-red-700 font-bold shadow-sm">🚨 긴급/특이사항 기록</button>
+          <button onClick={() => setShowClosingForm(true)} className="h-14 w-full rounded-2xl border-2 border-slate-300 bg-white text-slate-600 font-bold hover:bg-slate-50 shadow-sm">운영 종료 절차 시작하기</button>
         </div>
       )}
 
@@ -143,7 +143,7 @@ function PreRaceStep({ checkpointId, materials, onSuccess, refresh, forceLightSt
               value={qty[m.id] || ""} 
               onChange={e => setQty(p => ({ ...p, [m.id]: e.target.value }))} 
               style={forceLightStyle}
-              className="h-14 w-28 border-2 border-slate-300 rounded-2xl px-4 text-center font-black text-lg !text-black !bg-white" 
+              className="h-12 w-24 border-2 border-slate-300 rounded-xl px-4 text-center font-bold text-base !text-black !bg-white" 
               placeholder="0" 
             />
             <span className="text-slate-400 font-bold w-6">{m.unit || "개"}</span>
@@ -180,11 +180,11 @@ function FirstRunnerStep({ checkpointId, materials, onSuccess, refresh, forceLig
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-black text-slate-700 mb-2">온도 (°C)</label>
-            <input type="text" inputMode="decimal" value={temp} onChange={e => setTemp(e.target.value)} style={forceLightStyle} className="h-14 w-full border-2 border-slate-300 rounded-2xl px-6 font-black text-xl !text-black !bg-white" placeholder="25.5" />
+            <input type="text" inputMode="decimal" value={temp} onChange={e => setTemp(e.target.value)} style={forceLightStyle} className="h-12 w-full border-2 border-slate-300 rounded-xl px-4 font-bold text-base !text-black !bg-white" placeholder="25.5" />
           </div>
           <div>
             <label className="block text-sm font-black text-slate-700 mb-2">습도 (%)</label>
-            <input type="text" inputMode="decimal" value={hum} onChange={e => setHum(e.target.value)} style={forceLightStyle} className="h-14 w-full border-2 border-slate-300 rounded-2xl px-6 font-black text-xl !text-black !bg-white" placeholder="60" />
+            <input type="text" inputMode="decimal" value={hum} onChange={e => setHum(e.target.value)} style={forceLightStyle} className="h-12 w-full border-2 border-slate-300 rounded-xl px-4 font-bold text-base !text-black !bg-white" placeholder="60" />
           </div>
         </div>
         <div className="pt-4 border-t border-slate-100 space-y-5">
@@ -198,7 +198,7 @@ function FirstRunnerStep({ checkpointId, materials, onSuccess, refresh, forceLig
                 value={qty[m.id] || ""} 
                 onChange={e => setQty(p => ({ ...p, [m.id]: e.target.value }))} 
                 style={forceLightStyle}
-                className="h-14 w-28 border-2 border-slate-300 rounded-2xl px-4 text-center font-black text-lg !text-black !bg-white" 
+                className="h-12 w-24 border-2 border-slate-300 rounded-xl px-4 text-center font-bold text-base !text-black !bg-white" 
                 placeholder="0" 
               />
             </div>
@@ -283,13 +283,13 @@ function FinishBlock({ checkpointId, materials, onSuccess, refresh, forceLightSt
               value={qty[m.id] || ""} 
               onChange={e => setQty(p => ({ ...p, [m.id]: e.target.value }))} 
               style={forceLightStyle}
-              className="h-14 w-28 border-2 border-slate-300 rounded-2xl px-4 text-center font-black text-lg !text-black !bg-white" 
+              className="h-12 w-24 border-2 border-slate-300 rounded-xl px-4 text-center font-bold text-base !text-black !bg-white" 
               placeholder="0" 
             />
           </div>
         ))}
       </div>
-      <button disabled={loading} className="h-16 w-full bg-red-600 text-white rounded-2xl font-black text-xl shadow-red-200 shadow-xl">철수 완료 (기록 종료)</button>
+      <button disabled={loading} className="h-16 w-full bg-red-600 text-white rounded-2xl font-black text-lg shadow-xl">철수 완료 (기록 종료)</button>
     </form>
   );
 }

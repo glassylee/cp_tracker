@@ -52,6 +52,7 @@ export default function CpRecordForm({ projectId, checkpointId, materials, onRec
     opacity: 1,
     WebkitAppearance: 'none',
     appearance: 'none',
+    fontSize: '16px', // iOS 줌 방지 및 가시성 확보
   };
 
   const doSubmit = async () => {
