@@ -192,8 +192,26 @@ export default function CpRecordForm({ projectId, checkpointId, materials, onRec
           <div className="w-full max-sm:w-full max-w-sm rounded-3xl bg-white p-8 shadow-2xl">
             <p className="text-center text-xl font-black text-black">기록을 제출할까요?</p>
             <div className="mt-8 flex gap-3">
-              <button onClick={() => setShowConfirm(false)} className="flex-1 h-14 rounded-2xl border-2 border-slate-200 text-slate-600 font-bold">취소</button>
-              <button onClick={doSubmit} className="flex-1 h-14 rounded-2xl bg-slate-800 text-white font-bold">확인</button>
+              <button 
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowConfirm(false);
+                }} 
+                className="flex-1 h-14 rounded-2xl border-2 border-slate-200 text-slate-600 font-bold active:bg-slate-50"
+              >
+                취소
+              </button>
+              <button 
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  doSubmit();
+                }} 
+                className="flex-1 h-14 rounded-2xl bg-slate-800 text-white font-bold active:bg-slate-700"
+              >
+                확인
+              </button>
             </div>
           </div>
         </div>
