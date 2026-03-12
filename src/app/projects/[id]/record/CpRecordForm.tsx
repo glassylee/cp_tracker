@@ -58,6 +58,7 @@ export default function CpRecordForm({ projectId, checkpointId, materials, onRec
 
   const doSubmit = async () => {
     setStatus("submitting");
+    setShowConfirm(false); // ⚠️ 확인 클릭 시 팝업을 즉시 닫음
     try {
       let videoUrl: string | null = null;
       if (form.video) {
@@ -206,6 +207,7 @@ export default function CpRecordForm({ projectId, checkpointId, materials, onRec
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
+                  setShowConfirm(false);
                   doSubmit();
                 }} 
                 className="flex-1 h-14 rounded-2xl bg-slate-800 text-white font-bold active:bg-slate-700"
