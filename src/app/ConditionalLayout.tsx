@@ -24,29 +24,33 @@ function SidebarNav({ sidebarProjects }: { sidebarProjects: Project[] }) {
     setToday(d);
   }, []);
 
-  const { activeProjects, pastProjects } = useMemo(() => {
+  const { upcomingProjects, ongoingProjects, finishedProjects } = useMemo(() => {
     if (!today || !Array.isArray(sidebarProjects)) {
-      return { activeProjects: sidebarProjects || [], pastProjects: [] };
+      return { upcomingProjects: [], ongoingProjects: sidebarProjects || [], finishedProjects: [] };
     }
 
-    const active: Project[] = [];
-    const past: Project[] = [];
+    const upcoming: Project[] = [];
+    const ongoing: Project[] = [];
+    const finished: Project[] = [];
 
     sidebarProjects.forEach(p => {
       if (!p.event_date) {
-        active.push(p);
+        ongoing.push(p);
       } else {
         const eventDate = new Date(p.event_date);
         eventDate.setHours(0, 0, 0, 0);
-        if (eventDate >= today) {
-          active.push(p);
+        
+        if (eventDate.getTime() === today.getTime()) {
+          ongoing.push(p);
+        } else if (eventDate > today) {
+          upcoming.push(p);
         } else {
-          past.push(p);
+          finished.push(p);
         }
       }
     });
 
-    return { activeProjects: active, pastProjects: past };
+    return { upcomingProjects: upcoming, ongoingProjects: ongoing, finishedProjects: finished };
   }, [sidebarProjects, today]);
 
   // 하부 메뉴 렌더링 함수
@@ -90,41 +94,39 @@ function SidebarNav({ sidebarProjects }: { sidebarProjects: Project[] }) {
         </div>
         
         <div className="space-y-0.5">
-          <a
-            href="/projects?filter=active"
-            className={`flex items-center gap-2.5 rounded-lg px-4 py-2 text-[13px] font-medium transition-all ${
-              pathname === "/projects" && filter === 'active'
-                ? "bg-white text-black shadow-[0_1px_3px_rgba(0,0,0,0.1)] ring-1 ring-black/5"
-                : "text-[#1D1D1F] hover:bg-white/50"
-            }`}
-          >
+          {/* 1. 진행 중인 대회 */}
+          <div className="flex items-center gap-2.5 px-4 py-2 text-[13px] font-bold text-[#1D1D1F]">
             <span className="w-5 text-center opacity-70">⚡</span>
-            진행 중인 대회
-          </a>
-
-          <div className="mt-1 ml-4 border-l border-[#D2D2D7]/50 pl-2 space-y-0.5">
-            {activeProjects.map(p => renderProjectItem(p, false))}
-            {today && activeProjects.length === 0 && filter === 'active' && (
+            진행 대회
+          </div>
+          <div className="ml-4 border-l border-[#D2D2D7]/50 pl-2 space-y-0.5 mb-4">
+            {ongoingProjects.map(p => renderProjectItem(p, false))}
+            {today && ongoingProjects.length === 0 && (
               <span className="block px-4 py-1.5 text-[11px] text-[#A1A1A6] italic font-medium">진행 중인 대회 없음</span>
             )}
           </div>
 
-          <a
-            href="/projects?filter=past"
-            className={`flex items-center gap-2.5 rounded-lg px-4 py-2 text-[13px] font-medium transition-all mt-4 ${
-              pathname === "/projects" && filter === 'past'
-                ? "bg-white text-black shadow-[0_1px_3px_rgba(0,0,0,0.1)] ring-1 ring-black/5"
-                : "text-[#1D1D1F] hover:bg-white/50"
-            }`}
-          >
-            <span className="w-5 text-center opacity-70">📁</span>
-            지난 대회 기록
-          </a>
+          {/* 2. 예정된 대회 */}
+          <div className="flex items-center gap-2.5 px-4 py-2 text-[13px] font-bold text-[#1D1D1F]">
+            <span className="w-5 text-center opacity-70">📅</span>
+            예정 대회
+          </div>
+          <div className="ml-4 border-l border-[#D2D2D7]/50 pl-2 space-y-0.5 mb-4">
+            {upcomingProjects.map(p => renderProjectItem(p, false))}
+            {today && upcomingProjects.length === 0 && (
+              <span className="block px-4 py-1.5 text-[11px] text-[#A1A1A6] italic font-medium">예정된 대회 없음</span>
+            )}
+          </div>
 
-          <div className="mt-1 ml-4 border-l border-[#D2D2D7]/50 pl-2 space-y-0.5">
-            {pastProjects.map(p => renderProjectItem(p, true))}
-            {today && pastProjects.length === 0 && filter === 'past' && (
-              <span className="block px-4 py-1.5 text-[11px] text-[#A1A1A6] italic font-medium">지난 대회 없음</span>
+          {/* 3. 종료된 대회 */}
+          <div className="flex items-center gap-2.5 px-4 py-2 text-[13px] font-bold text-[#1D1D1F]">
+            <span className="w-5 text-center opacity-70">📁</span>
+            종료 대회
+          </div>
+          <div className="ml-4 border-l border-[#D2D2D7]/50 pl-2 space-y-0.5">
+            {finishedProjects.map(p => renderProjectItem(p, true))}
+            {today && finishedProjects.length === 0 && (
+              <span className="block px-4 py-1.5 text-[11px] text-[#A1A1A6] italic font-medium">종료된 대회 없음</span>
             )}
           </div>
         </div>
