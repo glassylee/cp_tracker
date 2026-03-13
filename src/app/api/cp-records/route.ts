@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
     const supabase = await createClient();
     const stepStatusValue = safeStr(step_status) ?? safeStr(record_stage);
 
-    const insertPayload: Record<string, unknown> = {
+    const insertPayload: { [key: string]: unknown } = {
       checkpoint_id,
       material_quantity: safeNum(material_quantity),
       temperature: safeNum(temperature),

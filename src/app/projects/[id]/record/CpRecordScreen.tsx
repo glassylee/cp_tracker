@@ -174,7 +174,7 @@ export default function CpRecordScreen({ projectId, checkpointId, materials, ses
 }
 
 function PreRaceStep({ checkpointId, materials, onSuccess, refresh, forceLightStyle }: any) {
-  const [qty, setQty] = useState<Record<string, string>>(() => Object.fromEntries(materials.map((m: any) => [m.id, ""])));
+  const [qty, setQty] = useState<{ [key: string]: string }>(() => Object.fromEntries(materials.map((m: any) => [m.id, ""])));
   const [video, setVideo] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -262,7 +262,7 @@ function PreRaceStep({ checkpointId, materials, onSuccess, refresh, forceLightSt
 }
 
 function FirstRunnerStep({ checkpointId, materials, onSuccess, refresh, forceLightStyle }: any) {
-  const [qty, setQty] = useState<Record<string, string>>(() => Object.fromEntries(materials.map((m: any) => [m.id, ""])));
+  const [qty, setQty] = useState<{ [key: string]: string }>(() => Object.fromEntries(materials.map((m: any) => [m.id, ""])));
   const [temp, setTemp] = useState("");
   const [hum, setHum] = useState("");
   const [video, setVideo] = useState<File | null>(null);
@@ -489,7 +489,7 @@ function EmergencyEventBlock({ checkpointId, onClose, onSaved, forceLightStyle }
 }
 
 function FinishBlock({ checkpointId, materials, onSuccess, refresh, forceLightStyle }: any) {
-  const [qty, setQty] = useState<Record<string, string>>(() => Object.fromEntries(materials.map((m: any) => [m.id, ""])));
+  const [qty, setQty] = useState<{ [key: string]: string }>(() => Object.fromEntries(materials.map((m: any) => [m.id, ""])));
   const [video, setVideo] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
 

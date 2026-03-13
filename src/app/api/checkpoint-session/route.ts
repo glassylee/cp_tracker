@@ -44,7 +44,7 @@ export async function PATCH(request: NextRequest) {
       );
     }
     const supabase = await createClient();
-    const updates: Record<string, unknown> = { stage };
+    const updates: { [key: string]: unknown } = { stage };
     if (stage === "recording") {
       const { data: existing } = await supabase
         .from("checkpoint_sessions")

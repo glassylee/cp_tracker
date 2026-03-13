@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 
 type FormState = {
   material_quantity: string;
-  materialQuantities: Record<string, string>;
+  materialQuantities: { [key: string]: string };
   temperature: string;
   humidity: string;
   notes: string;
@@ -19,7 +19,7 @@ const initialFormState = (
     humidity?: number | null;
     notes?: string | null;
     material_quantity?: number | null;
-    materialQuantities?: Record<string, number>;
+    materialQuantities?: { [key: string]: number };
   }
 ): FormState => ({
   material_quantity: initial?.material_quantity != null ? String(initial.material_quantity) : "",

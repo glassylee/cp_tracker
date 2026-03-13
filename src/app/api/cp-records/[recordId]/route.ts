@@ -81,7 +81,7 @@ export async function PATCH(
 
     const supabase = getSupabase();
 
-    const updatePayload: Record<string, unknown> = {
+    const updatePayload: { [key: string]: unknown } = {
       material_quantity: material_quantity ?? null,
       temperature: temperature ?? null,
       humidity: humidity ?? null,
