@@ -54,17 +54,18 @@ function SidebarNav({ sidebarProjects }: { sidebarProjects: Project[] }) {
   }, [sidebarProjects, today]);
 
   // 하부 메뉴 렌더링 함수
-  const renderProjectItem = (p: Project, isPast: boolean) => {
+  const renderProjectItem = (p: Project, isFinished: boolean) => {
     const isProjectActive = pathname?.startsWith(`/projects/${p.id}`);
     
     return (
       <div key={p.id} className="space-y-0.5">
         <div className="group/item relative flex items-center">
           <a
-            href={isPast ? `/projects/${p.id}/review` : `/projects/${p.id}`}
+            href={isFinished ? `/analytics?projectId=${p.id}` : `/projects/${p.id}`}
             className={`flex-1 rounded-lg px-4 py-1.5 text-[12px] font-medium truncate transition-all ${
-              pathname === `/projects/${p.id}` || pathname === `/projects/${p.id}/review`
-                ? "bg-white text-[#0071E3] shadow-sm ring-1 ring-black/5"
+              (isFinished && pathname === "/analytics" && searchParams?.get('projectId') === p.id) ||
+              (!isFinished && pathname === `/projects/${p.id}`)
+                ? "bg-white text-[#0071E3] shadow-sm ring-1 ring-black/5 font-bold"
                 : isProjectActive
                   ? "text-[#1D1D1F] font-bold"
                   : "text-[#86868B] hover:text-[#1D1D1F] hover:bg-white/20"
@@ -76,7 +77,7 @@ function SidebarNav({ sidebarProjects }: { sidebarProjects: Project[] }) {
             <ProjectSettingsMenu projectId={p.id} projectName={p.name} variant="sidebar" />
           </div>
         </div>
-        {isProjectActive && (
+        {!isFinished && isProjectActive && (
           <div className="ml-4 border-l border-[#D2D2D7]/30 pl-2 space-y-0.5 mt-0.5 mb-2 animate-in slide-in-from-left-2 duration-200">
             <a href={`/projects/${p.id}`} className={`block rounded-lg px-4 py-1 text-[11px] font-medium transition-all ${pathname === `/projects/${p.id}` ? "text-[#0071E3] bg-[#0071E3]/5" : "text-[#86868B] hover:text-[#1D1D1F]"}`}>CP 관리</a>
             <a href={`/projects/${p.id}/dashboard/settings`} className={`block rounded-lg px-4 py-1 text-[11px] font-medium transition-all ${pathname?.includes('/dashboard') ? "text-[#0071E3] bg-[#0071E3]/5" : "text-[#86868B] hover:text-[#1D1D1F]"}`}>대시보드</a>
@@ -140,7 +141,7 @@ function SidebarNav({ sidebarProjects }: { sidebarProjects: Project[] }) {
           <a 
             href="/analytics" 
             className={`flex items-center gap-2.5 rounded-lg px-4 py-2 text-[13px] font-medium transition-all ${
-              pathname === "/analytics"
+              pathname === "/analytics" && !searchParams?.get('projectId')
                 ? "bg-white text-black shadow-[0_1px_3px_rgba(0,0,0,0.1)] ring-1 ring-black/5"
                 : "text-[#1D1D1F] hover:bg-white/50"
             }`}
@@ -148,25 +149,6 @@ function SidebarNav({ sidebarProjects }: { sidebarProjects: Project[] }) {
             <span className="w-5 text-center opacity-70">📊</span>
             전체 통계 요약
           </a>
-          
-          <div className="mt-1 ml-4 border-l border-[#D2D2D7]/50 pl-2 space-y-0.5">
-            {finishedProjects.map(p => (
-              <a
-                key={p.id}
-                href={`/analytics?projectId=${p.id}`}
-                className={`block rounded-lg px-4 py-1.5 text-[12px] font-medium truncate transition-all ${
-                  pathname === "/analytics" && searchParams?.get('projectId') === p.id
-                    ? "text-[#0071E3] bg-[#0071E3]/5 font-bold"
-                    : "text-[#86868B] hover:text-[#1D1D1F] hover:bg-white/20"
-                }`}
-              >
-                {p.name}
-              </a>
-            ))}
-            {today && finishedProjects.length === 0 && (
-              <span className="block px-4 py-1.5 text-[11px] text-[#A1A1A6] italic font-medium">종료된 대회 없음</span>
-            )}
-          </div>
         </div>
       </div>
     </nav>
