@@ -15,7 +15,7 @@ interface Checkpoint {
   sort_order: number;
 }
 
-interface Record {
+interface CpRecord {
   id: string;
   checkpoint_id: string;
   record_stage: string;
@@ -44,7 +44,7 @@ export default function AnalyticsDashboard({ projects }: { projects: Project[] }
   const [selectedProjectId, setSelectedProjectId] = useState<string>(projectIdFromUrl || projects[0]?.id || "");
   const [data, setData] = useState<{
     checkpoints: Checkpoint[];
-    records: Record[];
+    records: CpRecord[];
     materials: MaterialQuantity[];
   } | null>(null);
   const [loading, setLoading] = useState(false);
@@ -145,7 +145,7 @@ export default function AnalyticsDashboard({ projects }: { projects: Project[] }
 
   // 3. Emergency & Environment
   const emergencyData = useMemo(() => {
-    if (!activeData) return { total: 0, byType: {} as Record<string, number>, logs: [] as Record[] };
+    if (!activeData) return { total: 0, byType: {} as Record<string, number>, logs: [] as CpRecord[] };
     const emergencies = activeData.records.filter(r => r.is_emergency);
     const byType: Record<string, number> = {};
     
