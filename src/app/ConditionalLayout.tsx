@@ -146,8 +146,27 @@ function SidebarNav({ sidebarProjects }: { sidebarProjects: Project[] }) {
             }`}
           >
             <span className="w-5 text-center opacity-70">📊</span>
-            통계 및 리포트
+            전체 통계 요약
           </a>
+          
+          <div className="mt-1 ml-4 border-l border-[#D2D2D7]/50 pl-2 space-y-0.5">
+            {finishedProjects.map(p => (
+              <a
+                key={p.id}
+                href={`/analytics?projectId=${p.id}`}
+                className={`block rounded-lg px-4 py-1.5 text-[12px] font-medium truncate transition-all ${
+                  pathname === "/analytics" && searchParams?.get('projectId') === p.id
+                    ? "text-[#0071E3] bg-[#0071E3]/5 font-bold"
+                    : "text-[#86868B] hover:text-[#1D1D1F] hover:bg-white/20"
+                }`}
+              >
+                {p.name}
+              </a>
+            ))}
+            {today && finishedProjects.length === 0 && (
+              <span className="block px-4 py-1.5 text-[11px] text-[#A1A1A6] italic font-medium">종료된 대회 없음</span>
+            )}
+          </div>
         </div>
       </div>
     </nav>
