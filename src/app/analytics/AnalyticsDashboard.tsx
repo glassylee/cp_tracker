@@ -112,7 +112,7 @@ export default function AnalyticsDashboard({ projects }: { projects: Project[] }
   const logisticsData = useMemo(() => {
     if (!activeData) return [];
     
-    const materialUsage: Record<string, { total: number; unit: string; byCP: Record<string, number> }> = {};
+    const materialUsage: { [key: string]: { total: number; unit: string; byCP: { [key: string]: number } } } = {};
     
     activeData.materials.forEach(m => {
       const name = m.checkpoint_materials.name;
@@ -145,9 +145,9 @@ export default function AnalyticsDashboard({ projects }: { projects: Project[] }
 
   // 3. Emergency & Environment
   const emergencyData = useMemo(() => {
-    if (!activeData) return { total: 0, byType: {} as Record<string, number>, logs: [] as CpRecord[] };
+    if (!activeData) return { total: 0, byType: {} as { [key: string]: number }, logs: [] as CpRecord[] };
     const emergencies = activeData.records.filter(r => r.is_emergency);
-    const byType: Record<string, number> = {};
+    const byType: { [key: string]: number } = {};
     
     emergencies.forEach(e => {
       const typeMatch = e.notes?.match(/\[(.*?)\]/);
